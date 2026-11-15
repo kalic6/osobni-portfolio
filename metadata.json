@@ -1,0 +1,6 @@
+{
+  "name": "Osobní portfolio — Káťa Kalivodová",
+  "description": "Interaktivní osobní portfolio s časovou osou odkud jdu, kde jsem a kam směřuji, manifestem informační gramotnosti, studiem, pracovními zkušenostmi a zájmy s možností správy obsahu.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
