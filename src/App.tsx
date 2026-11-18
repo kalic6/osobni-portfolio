@@ -19,6 +19,8 @@ import {
   SITE_PALETTES,
   getSiteText,
   isEditorEnvironment,
+  hasLocalStorageEdits,
+  syncPortfolioToCodebase,
 } from './data/portfolioData';
 
 import { Header, type PageView } from './components/Header';
@@ -31,7 +33,7 @@ import { ArticleDetailView } from './components/ArticleDetailView';
 import { AdminModal } from './components/AdminModal';
 import { Footer } from './components/Footer';
 import { ConfirmProvider, useConfirm } from './components/ConfirmModal';
-import { Check, Edit, LogOut, Database, Sparkles, Palette } from 'lucide-react';
+import { Check, Edit, LogOut, Database, Sparkles, Palette, Save } from 'lucide-react';
 
 function PortfolioApp() {
   const { requestConfirm } = useConfirm();
@@ -69,6 +71,22 @@ function PortfolioApp() {
     setTimeout(() => {
       setToastMessage(null);
     }, 3500);
+  };
+
+  // Automatically persist existing localStorage edits into src/data/publishedData.json in editor mode
+  useEffect(() => {
+    if (canManagePortfolio && hasLocalStorageEdits()) {
+      void syncPortfolioToCodebase(data);
+    }
+  }, [canManagePortfolio]);
+
+  const handleSyncToCodebase = async () => {
+    const ok = await syncPortfolioToCodebase(data);
+    if (ok) {
+      showToast('Všechny vaše úpravy byly zapsány do kódu projektu (publishedData.json) pro GitHub.');
+    } else {
+      showToast('Uložení do kódu se nezdařilo. Zkuste prosím obnovit stránku.');
+    }
   };
 
   // Synchronize state changes to localStorage
@@ -457,7 +475,15 @@ function PortfolioApp() {
                 Kliknutím na jakýkoliv text, fotografii, pilíř či milník jej můžete ihned upravit nebo smazat. Šipkami nahoru/dolů lze měnit pořadí.
               </span>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex flex-wrap items-center gap-2 shrink-0">
+              <button
+                onClick={handleSyncToCodebase}
+                className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-semibold transition-colors shadow-2xs cursor-pointer"
+                title="Zapíše aktuální podobu portfolia do souborů projektu, aby se projevila i na GitHubu"
+              >
+                <Save className="w-3.5 h-3.5" />
+                <span>Uložit úpravy pro GitHub</span>
+              </button>
               <button
                 onClick={openBackup}
                 className="inline-flex items-center gap-1.5 px-3 py-1 bg-white hover:bg-amber-100 text-amber-950 rounded-lg text-xs font-semibold border border-amber-300 transition-colors shadow-2xs cursor-pointer"

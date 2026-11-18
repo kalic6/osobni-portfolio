@@ -1,3 +1,5 @@
+import publishedDataRaw from './publishedData.json';
+
 export interface ManifestPoint {
   id: string;
   title: string;
@@ -1038,89 +1040,161 @@ export function isEditorEnvironment(): boolean {
   return true;
 }
 
+function normalizeAssetUrl(url: string): string {
+  if (!url) return url;
+  return url
+    .replace(/^\/src\/assets\/images\//, './assets/images/')
+    .replace(/^\/assets\/aistudio\//, './assets/aistudio/');
+}
+
+function normalizePortfolioForPublish(db: PortfolioDatabase): PortfolioDatabase {
+  const cleanPosts = (db.posts || []).map((post) => ({
+    ...post,
+    imageUrl: normalizeAssetUrl(post.imageUrl),
+    content: (post.content || []).map((block) =>
+      block
+        .replace(/\(\/src\/assets\/images\//g, '(./assets/images/')
+        .replace(/\(\/assets\/aistudio\//g, '(./assets/aistudio/')
+    ),
+  }));
+
+  const cleanInterests = (db.interests || []).map((item) => ({
+    ...item,
+    imageUrl: normalizeAssetUrl(item.imageUrl),
+  }));
+
+  return {
+    ...db,
+    manifest: {
+      ...db.manifest,
+      photoUrl: normalizeAssetUrl(db.manifest.photoUrl),
+    },
+    posts: cleanPosts,
+    blogTopics: (db.blogTopics || []).filter((t) => cleanPosts.some((p) => p.topic === t)),
+    interests: cleanInterests,
+  };
+}
+
+function hydratePortfolioDatabase(parsed: Partial<PortfolioDatabase>): PortfolioDatabase {
+  const mergedSiteTexts = { ...defaultSiteTexts, ...(parsed.siteTexts || {}) };
+  if (
+    !mergedSiteTexts['site.colorPalette'] ||
+    mergedSiteTexts['site.colorPalette'] === 'warm-parchment' ||
+    mergedSiteTexts['site.colorPalette'] === 'editorial-paper'
+  ) {
+    mergedSiteTexts['site.colorPalette'] = 'infostrateg';
+  }
+  if (mergedSiteTexts['header.brand'] === 'Káťa Kalivodová') {
+    mergedSiteTexts['header.brand'] = 'InfoStratég';
+  }
+  if (mergedSiteTexts['hero.kickerLeft'] === 'Osobní manifest & portfolio') {
+    mergedSiteTexts['hero.kickerLeft'] = 'InfoStratég';
+  }
+  if (mergedSiteTexts['hero.kickerRight'] === 'Informační gramotnost') {
+    mergedSiteTexts['hero.kickerRight'] = 'Hledej kontext.';
+  }
+
+  const currentPhoto = parsed.manifest?.photoUrl;
+  const finalPhoto =
+    !currentPhoto ||
+    currentPhoto.includes('portrait_kata_manifest') ||
+    currentPhoto === '/assets/aistudio/profile_picture_c1a456ff.jpeg'
+      ? './assets/aistudio/profile_picture_c1a456ff.jpeg'
+      : normalizeAssetUrl(currentPhoto);
+
+  const manifestData: ManifestData = {
+    ...initialPortfolioData.manifest,
+    ...(parsed.manifest || {}),
+    photoUrl: finalPhoto,
+    photoAlt: parsed.manifest?.photoAlt || 'InfoStratég – profilový obrázek @neztrat_se_v_info',
+    authorName:
+      parsed.manifest?.authorName === 'Káťa Kalivodová'
+        ? 'InfoStratég'
+        : (parsed.manifest?.authorName || 'InfoStratég'),
+    authorLocation:
+      parsed.manifest?.authorLocation && parsed.manifest.authorLocation !== '@neztrat_se_v_info | Hledej kontext.'
+        ? parsed.manifest.authorLocation
+        : 'Brno / Opálka, Česká republika',
+    authorRole:
+      parsed.manifest?.authorRole?.includes('Informační věda | Digitální kurátorství')
+        ? 'High-tech akademický profil informační vědy | @neztrat_se_v_info'
+        : (parsed.manifest?.authorRole || 'High-tech akademický profil informační vědy | @neztrat_se_v_info'),
+    aiPrinciples:
+      parsed.manifest && Array.isArray(parsed.manifest.aiPrinciples)
+        ? parsed.manifest.aiPrinciples
+        : defaultAiPrinciples,
+  };
+
+  const posts = (Array.isArray(parsed.posts) ? parsed.posts : initialPortfolioData.posts) as BlogPost[];
+  const blogTopics = (Array.isArray(parsed.blogTopics) ? parsed.blogTopics : initialPortfolioData.blogTopics).filter(
+    (t: string) => posts.some((p: BlogPost) => p.topic === t)
+  );
+
+  return normalizePortfolioForPublish({
+    siteTexts: mergedSiteTexts,
+    manifest: manifestData,
+    timeline: sortTimelineItems(Array.isArray(parsed.timeline) ? parsed.timeline : initialPortfolioData.timeline),
+    courses: Array.isArray(parsed.courses) ? parsed.courses : initialPortfolioData.courses,
+    experiences: Array.isArray(parsed.experiences) ? parsed.experiences : initialPortfolioData.experiences,
+    posts,
+    blogTopics,
+    interests: Array.isArray(parsed.interests) ? parsed.interests : initialPortfolioData.interests,
+  });
+}
+
+export function getCanonicalPortfolioData(): PortfolioDatabase {
+  const overrides = publishedDataRaw as Partial<PortfolioDatabase> | null;
+  if (overrides && overrides.manifest && Array.isArray(overrides.timeline)) {
+    return hydratePortfolioDatabase(overrides);
+  }
+  return initialPortfolioData;
+}
+
+export function hasLocalStorageEdits(): boolean {
+  try {
+    return Boolean(localStorage.getItem(STORAGE_KEY));
+  } catch {
+    return false;
+  }
+}
+
+export async function syncPortfolioToCodebase(data: PortfolioDatabase): Promise<boolean> {
+  if (!isEditorEnvironment()) return false;
+  try {
+    const cleanData = normalizePortfolioForPublish(data);
+    const res = await fetch('/__api/save-portfolio', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(cleanData),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
 export function getStoredPortfolioData(): PortfolioDatabase {
+  const canonical = getCanonicalPortfolioData();
   if (!isEditorEnvironment()) {
-    return initialPortfolioData;
+    return canonical;
   }
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return initialPortfolioData;
-    const parsed = JSON.parse(raw);
-    const mergedSiteTexts = { ...defaultSiteTexts, ...(parsed.siteTexts || {}) };
-    if (
-      !mergedSiteTexts['site.colorPalette'] ||
-      mergedSiteTexts['site.colorPalette'] === 'warm-parchment' ||
-      mergedSiteTexts['site.colorPalette'] === 'editorial-paper'
-    ) {
-      mergedSiteTexts['site.colorPalette'] = 'infostrateg';
-    }
-    if (mergedSiteTexts['header.brand'] === 'Káťa Kalivodová') {
-      mergedSiteTexts['header.brand'] = 'InfoStratég';
-    }
-    if (mergedSiteTexts['hero.kickerLeft'] === 'Osobní manifest & portfolio') {
-      mergedSiteTexts['hero.kickerLeft'] = 'InfoStratég';
-    }
-    if (mergedSiteTexts['hero.kickerRight'] === 'Informační gramotnost') {
-      mergedSiteTexts['hero.kickerRight'] = 'Hledej kontext.';
-    }
-
-    const currentPhoto = parsed.manifest?.photoUrl;
-    const finalPhoto =
-      !currentPhoto ||
-      currentPhoto.includes('portrait_kata_manifest') ||
-      currentPhoto === '/assets/aistudio/profile_picture_c1a456ff.jpeg'
-        ? './assets/aistudio/profile_picture_c1a456ff.jpeg'
-        : currentPhoto;
-
-    const manifestData = {
-      ...initialPortfolioData.manifest,
-      ...(parsed.manifest || {}),
-      photoUrl: finalPhoto,
-      photoAlt: 'InfoStratég – profilový obrázek @neztrat_se_v_info',
-      authorName:
-        parsed.manifest?.authorName === 'Káťa Kalivodová'
-          ? 'InfoStratég'
-          : (parsed.manifest?.authorName || 'InfoStratég'),
-      authorLocation:
-        parsed.manifest?.authorLocation && parsed.manifest.authorLocation !== '@neztrat_se_v_info | Hledej kontext.'
-          ? parsed.manifest.authorLocation
-          : 'Brno / Opálka, Česká republika',
-      authorRole:
-        parsed.manifest?.authorRole?.includes('Informační věda | Digitální kurátorství')
-          ? 'High-tech akademický profil informační vědy | @neztrat_se_v_info'
-          : (parsed.manifest?.authorRole || 'High-tech akademický profil informační vědy | @neztrat_se_v_info'),
-      aiPrinciples:
-        parsed.manifest && parsed.manifest.aiPrinciples && parsed.manifest.aiPrinciples.length > 0
-          ? parsed.manifest.aiPrinciples
-          : defaultAiPrinciples,
-    };
-
-    return {
-      siteTexts: mergedSiteTexts,
-      manifest: manifestData,
-      timeline: sortTimelineItems(parsed.timeline || initialPortfolioData.timeline),
-      courses: parsed.courses || initialPortfolioData.courses,
-      experiences: parsed.experiences || initialPortfolioData.experiences,
-      posts: (parsed.posts || initialPortfolioData.posts) as BlogPost[],
-      blogTopics: ((parsed.blogTopics || initialPortfolioData.blogTopics) as string[]).filter((t: string) =>
-        (parsed.posts || initialPortfolioData.posts).some((p: BlogPost) => p.topic === t)
-      ),
-      interests: parsed.interests || initialPortfolioData.interests,
-    };
+    if (!raw) return canonical;
+    const parsed = JSON.parse(raw) as Partial<PortfolioDatabase>;
+    return hydratePortfolioDatabase(parsed);
   } catch (e) {
     console.error("Chyba při čtení dat z localStorage:", e);
-    return initialPortfolioData;
+    return canonical;
   }
 }
 
 export function saveStoredPortfolioData(data: PortfolioDatabase): void {
   if (!isEditorEnvironment()) return;
   try {
-    const cleanData: PortfolioDatabase = {
-      ...data,
-      blogTopics: data.blogTopics.filter((t) => data.posts.some((p) => p.topic === t)),
-    };
+    const cleanData = normalizePortfolioForPublish(data);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(cleanData));
+    void syncPortfolioToCodebase(cleanData);
   } catch (e) {
     console.error("Chyba při ukládání do localStorage:", e);
   }
@@ -1129,6 +1203,13 @@ export function saveStoredPortfolioData(data: PortfolioDatabase): void {
 export function resetStoredPortfolioData(): PortfolioDatabase {
   try {
     localStorage.removeItem(STORAGE_KEY);
+    if (isEditorEnvironment()) {
+      void fetch('/__api/save-portfolio', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: '{}',
+      });
+    }
   } catch (e) {
     console.error(e);
   }
