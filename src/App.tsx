@@ -33,7 +33,7 @@ import { ArticleDetailView } from './components/ArticleDetailView';
 import { AdminModal } from './components/AdminModal';
 import { Footer } from './components/Footer';
 import { ConfirmProvider, useConfirm } from './components/ConfirmModal';
-import { Check, Edit, LogOut, Database, Sparkles, Palette, Save } from 'lucide-react';
+import { Check, Edit, LogOut, Database, Sparkles, Palette, Save, Loader2 } from 'lucide-react';
 
 function PortfolioApp() {
   const { requestConfirm } = useConfirm();
@@ -62,15 +62,16 @@ function PortfolioApp() {
     TimelineItem | StudyCourse | WorkExperience | BlogPost | null
   >(null);
 
-  // Notification toast
+  // Notification toast & GitHub codebase sync status
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [syncStatus, setSyncStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
 
   // Helper to show transient notification
-  const showToast = (msg: string) => {
+  const showToast = (msg: string, durationMs = 4000) => {
     setToastMessage(msg);
     setTimeout(() => {
-      setToastMessage(null);
-    }, 3500);
+      setToastMessage((prev) => (prev === msg ? null : prev));
+    }, durationMs);
   };
 
   // Automatically persist existing localStorage edits into src/data/publishedData.json in editor mode
@@ -81,11 +82,27 @@ function PortfolioApp() {
   }, [canManagePortfolio]);
 
   const handleSyncToCodebase = async () => {
+    if (syncStatus === 'saving') return;
+    setSyncStatus('saving');
     const ok = await syncPortfolioToCodebase(data);
     if (ok) {
-      showToast('Všechny vaše úpravy byly zapsány do kódu projektu (publishedData.json) pro GitHub.');
+      setSyncStatus('saved');
+      showToast(
+        'Hotovo! Úpravy byly uloženy do souboru projektu. Teď už jen odešlete změny na GitHub.',
+        6000
+      );
+      setTimeout(() => {
+        setSyncStatus((prev) => (prev === 'saved' ? 'idle' : prev));
+      }, 6000);
     } else {
-      showToast('Uložení do kódu se nezdařilo. Zkuste prosím obnovit stránku.');
+      setSyncStatus('error');
+      showToast(
+        'Uložení do kódu se nezdařilo. Zkuste prosím obnovit stránku editoru.',
+        5000
+      );
+      setTimeout(() => {
+        setSyncStatus((prev) => (prev === 'error' ? 'idle' : prev));
+      }, 4000);
     }
   };
 
@@ -478,11 +495,37 @@ function PortfolioApp() {
             <div className="flex flex-wrap items-center gap-2 shrink-0">
               <button
                 onClick={handleSyncToCodebase}
-                className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-semibold transition-colors shadow-2xs cursor-pointer"
+                disabled={syncStatus === 'saving'}
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all shadow-2xs cursor-pointer ${
+                  syncStatus === 'saved'
+                    ? 'bg-emerald-600 text-white ring-2 ring-emerald-300'
+                    : syncStatus === 'error'
+                      ? 'bg-rose-700 hover:bg-rose-800 text-white'
+                      : 'bg-emerald-700 hover:bg-emerald-800 text-white disabled:opacity-70'
+                }`}
                 title="Zapíše aktuální podobu portfolia do souborů projektu, aby se projevila i na GitHubu"
               >
-                <Save className="w-3.5 h-3.5" />
-                <span>Uložit úpravy pro GitHub</span>
+                {syncStatus === 'saving' ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Ukládám pro GitHub...</span>
+                  </>
+                ) : syncStatus === 'saved' ? (
+                  <>
+                    <Check className="w-3.5 h-3.5" />
+                    <span>Uloženo pro GitHub!</span>
+                  </>
+                ) : syncStatus === 'error' ? (
+                  <>
+                    <Save className="w-3.5 h-3.5" />
+                    <span>Chyba uložení – zkusit znovu</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-3.5 h-3.5" />
+                    <span>Uložit úpravy pro GitHub</span>
+                  </>
+                )}
               </button>
               <button
                 onClick={openBackup}
