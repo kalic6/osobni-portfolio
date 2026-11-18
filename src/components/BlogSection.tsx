@@ -12,7 +12,7 @@ import {
   ArrowLeft,
   FolderPlus,
 } from 'lucide-react';
-import { type BlogPost, getSiteText } from '../data/portfolioData';
+import { type BlogPost, getPostTopics, getSiteText } from '../data/portfolioData';
 import { InlineText, InlineImage } from './InlineEdit';
 
 interface BlogSectionProps {
@@ -52,11 +52,13 @@ export function BlogSection({
   const [newTopicName, setNewTopicName] = useState('');
 
   // Only display topics in filter that have at least one post
-  const availableTopics = topics.filter((t) => posts.some((p) => p.topic === t));
+  const availableTopics = topics.filter((t) =>
+    posts.some((p) => getPostTopics(p).includes(t))
+  );
 
   // Reset selected topic if it has 0 posts
   useEffect(() => {
-    if (selectedTopic !== 'all' && !posts.some((p) => p.topic === selectedTopic)) {
+    if (selectedTopic !== 'all' && !posts.some((p) => getPostTopics(p).includes(selectedTopic))) {
       setSelectedTopic('all');
     }
   }, [posts, selectedTopic]);
@@ -64,7 +66,7 @@ export function BlogSection({
   // When on the homepage, only show maximum 4 latest posts
   const displayedPosts = isStandaloneView
     ? posts.filter((post) => {
-        const matchesTopic = selectedTopic === 'all' || post.topic === selectedTopic;
+        const matchesTopic = selectedTopic === 'all' || getPostTopics(post).includes(selectedTopic);
         const matchesSearch =
           post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           post.annotation.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -230,7 +232,7 @@ export function BlogSection({
                   Všechna témata ({posts.length})
                 </button>
                 {availableTopics.map((t) => {
-                  const count = posts.filter((p) => p.topic === t).length;
+                  const count = posts.filter((p) => getPostTopics(p).includes(t)).length;
                   return (
                     <button
                       key={t}
@@ -324,14 +326,30 @@ export function BlogSection({
                       aspectClass="aspect-16/10"
                     />
                     
-                    {/* Topic Badge Overlay */}
-                    <div className="absolute top-3 left-3 px-3 py-1 bg-stone-950/75 backdrop-blur-xs text-white text-xs font-semibold rounded-md pointer-events-auto">
-                      <InlineText
-                        value={post.topic}
-                        onSave={(val) => onUpdatePost?.(post.id, { topic: val })}
-                        isAdmin={isAdmin}
-                        label="Téma článku"
-                      />
+                    {/* Topic Badges Overlay */}
+                    <div className="absolute top-3 left-3 right-3 flex flex-wrap gap-1.5 pointer-events-auto">
+                      {getPostTopics(post).map((topicLabel, tIdx) => (
+                        <div
+                          key={`${topicLabel}-${tIdx}`}
+                          className="px-2.5 py-1 bg-stone-950/80 backdrop-blur-xs text-white text-xs font-semibold rounded-md"
+                        >
+                          <InlineText
+                            value={topicLabel}
+                            onSave={(val) => {
+                              const currentTopics = getPostTopics(post);
+                              const updatedTopics = currentTopics.map((t, idx) =>
+                                idx === tIdx ? val : t
+                              );
+                              onUpdatePost?.(post.id, {
+                                topic: updatedTopics[0] || val,
+                                topics: updatedTopics,
+                              });
+                            }}
+                            isAdmin={isAdmin}
+                            label="Téma článku"
+                          />
+                        </div>
+                      ))}
                     </div>
                   </div>
 

@@ -7,6 +7,9 @@ import {
   setAdminSession,
   defaultSiteTexts,
   sortTimelineItems,
+  getPostTopics,
+  getPostSlug,
+  slugifyCzech,
   PHASE_LABELS,
   type TimelinePhase,
   type PortfolioDatabase,
@@ -35,15 +38,78 @@ import { Footer } from './components/Footer';
 import { ConfirmProvider, useConfirm } from './components/ConfirmModal';
 import { Check, Edit, LogOut, Database, Sparkles, Palette, Save, Loader2 } from 'lucide-react';
 
+const BASE_DOCUMENT_TITLE = 'Od informačního chaosu k porozumění a kontextu';
+
+function parseRouteFromHash(
+  rawHash: string,
+  posts: BlogPost[]
+): { view: PageView; postId: string | null; anchor: string | null } {
+  const cleaned = rawHash.replace(/^#/, '').trim();
+  if (!cleaned || cleaned === '/' || cleaned === 'uvod' || cleaned === '/uvod') {
+    return { view: 'home', postId: null, anchor: null };
+  }
+  if (cleaned === 'timeline' || cleaned === '/timeline') {
+    return { view: 'home', postId: null, anchor: '#timeline' };
+  }
+  const normalized = cleaned.replace(/^\/+/, '').replace(/\/+$/, '');
+  if (normalized === 'studium' || normalized === 'study') {
+    return { view: 'study', postId: null, anchor: null };
+  }
+  if (normalized === 'zkusenosti' || normalized === 'experience') {
+    return { view: 'experience', postId: null, anchor: null };
+  }
+  if (normalized === 'blog') {
+    return { view: 'blog', postId: null, anchor: null };
+  }
+  if (normalized.startsWith('blog/')) {
+    const slugOrId = decodeURIComponent(normalized.slice('blog/'.length)).replace(/\/+$/, '');
+    const matched = posts.find(
+      (p) =>
+        p.id === slugOrId ||
+        getPostSlug(p) === slugOrId ||
+        slugifyCzech(p.id) === slugifyCzech(slugOrId)
+    );
+    if (matched) {
+      return { view: 'article', postId: matched.id, anchor: null };
+    }
+    return { view: 'blog', postId: null, anchor: null };
+  }
+  return { view: 'home', postId: null, anchor: null };
+}
+
+function buildHashForRoute(
+  view: PageView,
+  postId: string | null,
+  posts: BlogPost[],
+  sectionAnchor?: string
+): string {
+  if (view === 'study') return '#/studium';
+  if (view === 'experience') return '#/zkusenosti';
+  if (view === 'blog') return '#/blog';
+  if (view === 'article') {
+    const post = posts.find((p) => p.id === postId) || posts[0];
+    return post ? `#/blog/${getPostSlug(post)}` : '#/blog';
+  }
+  if (view === 'home' && sectionAnchor && sectionAnchor !== '#uvod') {
+    return sectionAnchor.startsWith('#') ? sectionAnchor : `#${sectionAnchor}`;
+  }
+  return '';
+}
+
 function PortfolioApp() {
   const { requestConfirm } = useConfirm();
 
   // Primary data state stored in localStorage
   const [data, setData] = useState<PortfolioDatabase>(() => getStoredPortfolioData());
 
-  // Current view navigation: 'home' | 'timeline' | 'study' | 'experience' | 'blog' | 'article'
-  const [activeView, setActiveView] = useState<PageView>('home');
-  const [activePostId, setActivePostId] = useState<string | null>(null);
+  const initialRoute =
+    typeof window !== 'undefined'
+      ? parseRouteFromHash(window.location.hash, data.posts)
+      : { view: 'home' as PageView, postId: null, anchor: null };
+
+  // Current view navigation: 'home' | 'study' | 'experience' | 'blog' | 'article'
+  const [activeView, setActiveView] = useState<PageView>(initialRoute.view);
+  const [activePostId, setActivePostId] = useState<string | null>(initialRoute.postId);
 
   const canManagePortfolio = isEditorEnvironment();
 
@@ -109,7 +175,9 @@ function PortfolioApp() {
   // Synchronize state changes to localStorage
   const handleSaveData = (newData: PortfolioDatabase, feedbackMsg?: string) => {
     // Automatically prune blog topics that have 0 posts
-    const prunedTopics = newData.blogTopics.filter((t) => newData.posts.some((p) => p.topic === t));
+    const prunedTopics = newData.blogTopics.filter((t) =>
+      newData.posts.some((p) => getPostTopics(p).includes(t))
+    );
     const cleanData = { ...newData, blogTopics: prunedTopics };
     setData(cleanData);
     saveStoredPortfolioData(cleanData);
@@ -140,7 +208,7 @@ function PortfolioApp() {
     showToast('Byla jste bezpečně odhlášena z režimu úprav.');
   };
 
-  const [pendingAnchor, setPendingAnchor] = useState<string | null>(null);
+  const [pendingAnchor, setPendingAnchor] = useState<string | null>(initialRoute.anchor);
 
   const scrollToSectionAnchor = (anchor: string) => {
     const id = anchor.replace(/^#/, '');
@@ -160,11 +228,60 @@ function PortfolioApp() {
     }
   }, [activeView, pendingAnchor]);
 
+  // Keep browser Back/Forward buttons and manual URL edits working
+  useEffect(() => {
+    const syncFromUrl = () => {
+      const route = parseRouteFromHash(window.location.hash, data.posts);
+      setActiveView(route.view);
+      setActivePostId(route.postId);
+      setPendingAnchor(route.anchor);
+      if (!route.anchor) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+    window.addEventListener('hashchange', syncFromUrl);
+    window.addEventListener('popstate', syncFromUrl);
+    return () => {
+      window.removeEventListener('hashchange', syncFromUrl);
+      window.removeEventListener('popstate', syncFromUrl);
+    };
+  }, [data.posts]);
+
+  // Keep browser tab title synchronized with active route
+  useEffect(() => {
+    if (activeView === 'study') {
+      document.title = `Studium · ${BASE_DOCUMENT_TITLE}`;
+    } else if (activeView === 'experience') {
+      document.title = `Zkušenosti · ${BASE_DOCUMENT_TITLE}`;
+    } else if (activeView === 'blog') {
+      document.title = `Blog · ${BASE_DOCUMENT_TITLE}`;
+    } else if (activeView === 'article') {
+      const currentPost = data.posts.find((p) => p.id === activePostId) || data.posts[0];
+      document.title = currentPost
+        ? `${currentPost.title} · ${BASE_DOCUMENT_TITLE}`
+        : `Blog · ${BASE_DOCUMENT_TITLE}`;
+    } else {
+      document.title = BASE_DOCUMENT_TITLE;
+    }
+  }, [activeView, activePostId, data.posts]);
+
+  const pushUrlRoute = (view: PageView, postId: string | null, sectionAnchor?: string) => {
+    const targetHash = buildHashForRoute(view, postId, data.posts, sectionAnchor);
+    if (targetHash) {
+      if (window.location.hash !== targetHash) {
+        window.history.pushState(null, '', targetHash);
+      }
+    } else if (window.location.hash) {
+      window.history.pushState(null, '', window.location.pathname + window.location.search);
+    }
+  };
+
   // Safe navigation handler (supports optional section anchor like #timeline)
   const handleNavigate = (view: PageView, sectionAnchor?: string) => {
     if (view !== 'article') {
       setActivePostId(null);
     }
+    pushUrlRoute(view, view === 'article' ? activePostId : null, sectionAnchor);
     if (view === 'home' && sectionAnchor && sectionAnchor !== '#uvod') {
       if (activeView === 'home') {
         scrollToSectionAnchor(sectionAnchor);
@@ -183,6 +300,7 @@ function PortfolioApp() {
   const handleOpenArticle = (postId: string) => {
     setActivePostId(postId);
     setActiveView('article');
+    pushUrlRoute('article', postId);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -294,11 +412,22 @@ function PortfolioApp() {
   };
 
   const handleUpdatePost = (id: string, updated: Partial<BlogPost>) => {
-    const updatedList = data.posts.map((item) =>
-      item.id === id ? { ...item, ...updated } : item
+    const updatedList = data.posts.map((item) => {
+      if (item.id !== id) return item;
+      const merged = { ...item, ...updated };
+      const postTopics = getPostTopics(merged);
+      return {
+        ...merged,
+        topic: postTopics[0] || merged.topic,
+        topics: postTopics.length ? postTopics : [merged.topic],
+      };
+    });
+    const candidateTopics = Array.from(
+      new Set([...data.blogTopics, ...updatedList.flatMap((p) => getPostTopics(p))])
     );
-    const candidateTopics = Array.from(new Set([...data.blogTopics, ...(updated.topic ? [updated.topic] : [])]));
-    const prunedTopics = candidateTopics.filter((t) => updatedList.some((p) => p.topic === t));
+    const prunedTopics = candidateTopics.filter((t) =>
+      updatedList.some((p) => getPostTopics(p).includes(t))
+    );
     handleSaveData({ ...data, posts: updatedList, blogTopics: prunedTopics }, 'Článek blogu byl upraven.');
   };
 
@@ -355,7 +484,9 @@ function PortfolioApp() {
       confirmLabel: 'Smazat článek',
       onConfirm: () => {
         const updated = data.posts.filter((item) => item.id !== id);
-        const prunedTopics = data.blogTopics.filter((t) => updated.some((p) => p.topic === t));
+        const prunedTopics = data.blogTopics.filter((t) =>
+          updated.some((p) => getPostTopics(p).includes(t))
+        );
         handleSaveData({ ...data, posts: updated, blogTopics: prunedTopics }, 'Článek byl smazán.');
       },
     });
@@ -688,6 +819,7 @@ function PortfolioApp() {
               }}
               siteTexts={data.siteTexts || defaultSiteTexts}
               onUpdateSiteText={handleUpdateSiteText}
+              onUpdateManifest={handleUpdateManifest}
               isAdmin={isAdmin}
               onBackToBlog={() => handleNavigate('blog')}
               onBackToHome={() => handleNavigate('home')}

@@ -111,6 +111,7 @@ export interface BlogPost {
   id: string;
   title: string;
   topic: string;
+  topics?: string[];
   date: string;
   readTime: string;
   imageUrl: string;
@@ -118,6 +119,29 @@ export interface BlogPost {
   featuredQuote: string;
   content: string[];
   tags: string[];
+}
+
+export function getPostTopics(post: Pick<BlogPost, 'topic' | 'topics'>): string[] {
+  const list =
+    Array.isArray(post.topics) && post.topics.length > 0
+      ? post.topics
+      : post.topic
+        ? [post.topic]
+        : [];
+  return Array.from(new Set(list.map((t) => t.trim()).filter(Boolean)));
+}
+
+export function slugifyCzech(text: string): string {
+  return (text || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+export function getPostSlug(post: Pick<BlogPost, 'id' | 'title'>): string {
+  return slugifyCzech(post.title) || slugifyCzech(post.id) || post.id;
 }
 
 export interface InterestItem {
@@ -524,6 +548,9 @@ export const defaultSiteTexts: Record<string, string> = {
   "blog.ctaBoxTitle": "Chcete si přečíst více článků a témat?",
   "blog.ctaBoxDesc": "V samostatné sekci blogu najdete kompletní archiv textů přehledně rozdělený do témat: Informační gramotnost, Práce s informacemi, Knížky a publikace a Z osobního života.",
   "blog.ctaBoxBtn": "Přejít do kompletního archivu blogu",
+  "article.authorBio": "High-tech akademický profil informační vědy. Zkoumám hluboké čtení, digitální kurátorství, mediální gramotnost a etické rozhraní lidského myšlení s AI. Hledej kontext.",
+  "article.authorManifestLink": "Prohlédnout osobní manifest a časovou osu →",
+  "article.authorInstagramLabel": "Instagram @neztrat_se_v_info",
 
   // Interests Section
   "interests.backBtn": "Zpět na hlavní portfolio",
@@ -1028,6 +1055,7 @@ export const initialPortfolioData: PortfolioDatabase = {
 };
 
 const STORAGE_KEY = 'portfolio_kata_kalivodova_db_v3';
+const SYNCED_CANONICAL_POSTS_KEY = 'portfolio_kata_synced_canonical_posts_v1';
 const ADMIN_SESSION_KEY = 'portfolio_kata_admin_session';
 
 export function isEditorEnvironment(): boolean {
@@ -1048,20 +1076,30 @@ function normalizeAssetUrl(url: string): string {
 }
 
 function normalizePortfolioForPublish(db: PortfolioDatabase): PortfolioDatabase {
-  const cleanPosts = (db.posts || []).map((post) => ({
-    ...post,
-    imageUrl: normalizeAssetUrl(post.imageUrl),
-    content: (post.content || []).map((block) =>
-      block
-        .replace(/\(\/src\/assets\/images\//g, '(./assets/images/')
-        .replace(/\(\/assets\/aistudio\//g, '(./assets/aistudio/')
-    ),
-  }));
+  const cleanPosts = (db.posts || []).map((post) => {
+    const postTopics = getPostTopics(post);
+    const primaryTopic = postTopics[0] || post.topic || 'Obecné';
+    return {
+      ...post,
+      topic: primaryTopic,
+      topics: postTopics.length ? postTopics : [primaryTopic],
+      imageUrl: normalizeAssetUrl(post.imageUrl),
+      content: (post.content || []).map((block) =>
+        block
+          .replace(/\(\/src\/assets\/images\//g, '(./assets/images/')
+          .replace(/\(\/assets\/aistudio\//g, '(./assets/aistudio/')
+      ),
+    };
+  });
 
   const cleanInterests = (db.interests || []).map((item) => ({
     ...item,
     imageUrl: normalizeAssetUrl(item.imageUrl),
   }));
+
+  const usedTopics = Array.from(new Set(cleanPosts.flatMap((p) => getPostTopics(p))));
+  const orderedExisting = (db.blogTopics || []).filter((t) => usedTopics.includes(t));
+  const mergedBlogTopics = Array.from(new Set([...orderedExisting, ...usedTopics]));
 
   return {
     ...db,
@@ -1070,7 +1108,7 @@ function normalizePortfolioForPublish(db: PortfolioDatabase): PortfolioDatabase 
       photoUrl: normalizeAssetUrl(db.manifest.photoUrl),
     },
     posts: cleanPosts,
-    blogTopics: (db.blogTopics || []).filter((t) => cleanPosts.some((p) => p.topic === t)),
+    blogTopics: mergedBlogTopics,
     interests: cleanInterests,
   };
 }
@@ -1126,8 +1164,13 @@ function hydratePortfolioDatabase(parsed: Partial<PortfolioDatabase>): Portfolio
   };
 
   const posts = (Array.isArray(parsed.posts) ? parsed.posts : initialPortfolioData.posts) as BlogPost[];
-  const blogTopics = (Array.isArray(parsed.blogTopics) ? parsed.blogTopics : initialPortfolioData.blogTopics).filter(
-    (t: string) => posts.some((p: BlogPost) => p.topic === t)
+  const usedTopics = Array.from(new Set(posts.flatMap((p) => getPostTopics(p))));
+  const baseTopics = Array.isArray(parsed.blogTopics) ? parsed.blogTopics : initialPortfolioData.blogTopics;
+  const blogTopics = Array.from(
+    new Set([
+      ...baseTopics.filter((t: string) => usedTopics.includes(t)),
+      ...usedTopics,
+    ])
   );
 
   return normalizePortfolioForPublish({
@@ -1180,9 +1223,59 @@ export function getStoredPortfolioData(): PortfolioDatabase {
   }
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return canonical;
+    if (!raw) {
+      try {
+        const canonicalIds = canonical.posts.map((p) => p.id);
+        localStorage.setItem(SYNCED_CANONICAL_POSTS_KEY, JSON.stringify(canonicalIds));
+      } catch {
+        // ignore storage errors
+      }
+      return canonical;
+    }
+
     const parsed = JSON.parse(raw) as Partial<PortfolioDatabase>;
-    return hydratePortfolioDatabase(parsed);
+    const hydrated = hydratePortfolioDatabase(parsed);
+
+    // Automatically import newly added canonical posts (e.g. uploaded via assistant)
+    // into an existing editor localStorage without resurrecting previously deleted posts.
+    let syncedIds: string[] = [];
+    try {
+      const rawSynced = localStorage.getItem(SYNCED_CANONICAL_POSTS_KEY);
+      if (rawSynced) {
+        const parsedSynced = JSON.parse(rawSynced);
+        if (Array.isArray(parsedSynced)) {
+          syncedIds = parsedSynced.filter((id): id is string => typeof id === 'string');
+        }
+      }
+    } catch {
+      syncedIds = [];
+    }
+
+    const newCanonicalPosts = canonical.posts.filter(
+      (canonPost) =>
+        !syncedIds.includes(canonPost.id) &&
+        !hydrated.posts.some((existing) => existing.id === canonPost.id)
+    );
+
+    if (newCanonicalPosts.length > 0) {
+      const mergedPosts = [...newCanonicalPosts, ...hydrated.posts];
+      const mergedTopics = Array.from(
+        new Set([...hydrated.blogTopics, ...mergedPosts.flatMap((p) => getPostTopics(p))])
+      );
+      const mergedDb = normalizePortfolioForPublish({
+        ...hydrated,
+        posts: mergedPosts,
+        blogTopics: mergedTopics,
+      });
+      const nextSyncedIds = Array.from(
+        new Set([...syncedIds, ...newCanonicalPosts.map((p) => p.id)])
+      );
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedDb));
+      localStorage.setItem(SYNCED_CANONICAL_POSTS_KEY, JSON.stringify(nextSyncedIds));
+      return mergedDb;
+    }
+
+    return hydrated;
   } catch (e) {
     console.error("Chyba při čtení dat z localStorage:", e);
     return canonical;
@@ -1203,6 +1296,7 @@ export function saveStoredPortfolioData(data: PortfolioDatabase): void {
 export function resetStoredPortfolioData(): PortfolioDatabase {
   try {
     localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(SYNCED_CANONICAL_POSTS_KEY);
     if (isEditorEnvironment()) {
       void fetch('/__api/save-portfolio', {
         method: 'POST',

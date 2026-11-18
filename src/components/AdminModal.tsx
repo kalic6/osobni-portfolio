@@ -8,6 +8,7 @@ import {
   type BlogPost,
   type TimelinePhase,
   sortTimelineItems,
+  getPostTopics,
 } from '../data/portfolioData';
 import { useConfirm } from './ConfirmModal';
 import { FormatToolbar } from './FormattedArticleContent';
@@ -108,6 +109,8 @@ export function AdminModal({
   const [skillsInput, setSkillsInput] = useState('');
   const [achievementsInput, setAchievementsInput] = useState('');
   const [postContentInput, setPostContentInput] = useState('');
+  const [postTopics, setPostTopics] = useState<string[]>([]);
+  const [newPostTopicInput, setNewPostTopicInput] = useState('');
   const [jsonInput, setJsonInput] = useState('');
 
   useEffect(() => {
@@ -184,15 +187,20 @@ export function AdminModal({
     } else if (modalType === 'post') {
       if (editingItem) {
         const item = editingItem as BlogPost;
+        const itemTopics = getPostTopics(item);
         setPostForm(item);
+        setPostTopics(itemTopics.length ? itemTopics : [currentData.blogTopics[0] || 'Informační gramotnost']);
+        setNewPostTopicInput('');
         setPostContentInput((item.content || []).join('\n\n'));
         setTagsInput((item.tags || []).join(', '));
       } else {
+        const defaultTopic = currentData.blogTopics[0] || 'Informační gramotnost';
         setPostForm({
           id: `post-${Date.now()}`,
           title: '',
-          topic: currentData.blogTopics[0] || 'Informační gramotnost',
-          date: 'Listopad 2025',
+          topic: defaultTopic,
+          topics: [defaultTopic],
+          date: 'Listopad 2026',
           readTime: '5 min čtení',
           imageUrl: presetImages[1].url,
           annotation: '',
@@ -200,6 +208,8 @@ export function AdminModal({
           content: [],
           tags: [],
         });
+        setPostTopics([defaultTopic]);
+        setNewPostTopicInput('');
         setPostContentInput('');
         setTagsInput('');
       }
@@ -362,6 +372,22 @@ export function AdminModal({
     onClose();
   };
 
+  const handleTogglePostTopic = (topicName: string) => {
+    setPostTopics((prev) => {
+      if (prev.includes(topicName)) {
+        return prev.length > 1 ? prev.filter((t) => t !== topicName) : prev;
+      }
+      return [...prev, topicName];
+    });
+  };
+
+  const handleAddCustomPostTopic = () => {
+    const cleaned = newPostTopicInput.trim();
+    if (!cleaned) return;
+    setPostTopics((prev) => (prev.includes(cleaned) ? prev : [...prev, cleaned]));
+    setNewPostTopicInput('');
+  };
+
   const handleSavePost = (e: React.FormEvent) => {
     e.preventDefault();
     const contentParagraphs = postContentInput
@@ -373,11 +399,16 @@ export function AdminModal({
       .map((s) => s.trim())
       .filter(Boolean);
 
+    const finalTopics = postTopics.length
+      ? Array.from(new Set(postTopics.map((t) => t.trim()).filter(Boolean)))
+      : [postForm.topic || currentData.blogTopics[0] || 'Informační gramotnost'];
+
     const postToSave: BlogPost = {
       id: postForm.id || `post-${Date.now()}`,
       title: postForm.title || 'Nový článek',
-      topic: postForm.topic || currentData.blogTopics[0] || 'Informační gramotnost',
-      date: postForm.date || 'Listopad 2025',
+      topic: finalTopics[0],
+      topics: finalTopics,
+      date: postForm.date || 'Listopad 2026',
       readTime: postForm.readTime || '5 min čtení',
       imageUrl: postForm.imageUrl || presetImages[1].url,
       annotation: postForm.annotation || '',
@@ -396,8 +427,8 @@ export function AdminModal({
 
     // Keep only topics that have at least one post
     const updatedTopics = Array.from(
-      new Set([...currentData.blogTopics, postToSave.topic])
-    ).filter((t) => updatedList.some((p) => p.topic === t));
+      new Set([...currentData.blogTopics, ...finalTopics])
+    ).filter((t) => updatedList.some((p) => getPostTopics(p).includes(t)));
 
     onSaveData({ ...currentData, posts: updatedList, blogTopics: updatedTopics });
     onClose();
@@ -1026,20 +1057,53 @@ export function AdminModal({
         {/* 6. BLOG POST MODAL */}
         {modalType === 'post' && (
           <form onSubmit={handleSavePost} className="space-y-4 text-xs sm:text-sm">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-3">
               <div>
-                <label className="block text-stone-700 font-semibold mb-1">Téma / Kategorie článku</label>
-                <select
-                  value={postForm.topic}
-                  onChange={(e) => setPostForm({ ...postForm, topic: e.target.value })}
-                  className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-lg text-stone-900 font-medium"
-                >
-                  {currentData.blogTopics.map((t) => (
-                    <option key={t} value={t}>
-                      {t}
-                    </option>
-                  ))}
-                </select>
+                <label className="block text-stone-700 font-semibold mb-1.5">
+                  Témata / Kategorie článku (lze vybrat i více témat)
+                </label>
+                <div className="flex flex-wrap gap-1.5 mb-2">
+                  {Array.from(new Set([...currentData.blogTopics, ...postTopics])).map((t) => {
+                    const isSelected = postTopics.includes(t);
+                    return (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => handleTogglePostTopic(t)}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition-colors cursor-pointer ${
+                          isSelected
+                            ? 'bg-stone-900 text-white border-stone-900 shadow-2xs'
+                            : 'bg-stone-50 text-stone-700 border-stone-300 hover:bg-stone-100'
+                        }`}
+                      >
+                        {isSelected ? '✓ ' : '+ '}
+                        {t}
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={newPostTopicInput}
+                    onChange={(e) => setNewPostTopicInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddCustomPostTopic();
+                      }
+                    }}
+                    placeholder="Přidat nové téma..."
+                    className="flex-1 px-3 py-1.5 text-xs bg-stone-50 border border-stone-300 rounded-lg text-stone-900"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddCustomPostTopic}
+                    className="px-3 py-1.5 bg-stone-200 hover:bg-stone-300 text-stone-800 rounded-lg text-xs font-semibold cursor-pointer"
+                  >
+                    Přidat téma
+                  </button>
+                </div>
               </div>
 
               <div>
@@ -1049,7 +1113,7 @@ export function AdminModal({
                     type="text"
                     value={postForm.date}
                     onChange={(e) => setPostForm({ ...postForm, date: e.target.value })}
-                    placeholder="např. 15. listopadu 2025"
+                    placeholder="např. Listopad 2026"
                     className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-lg text-stone-900"
                     required
                   />

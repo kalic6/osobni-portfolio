@@ -101,7 +101,10 @@ export function InlineText({
 
   if (isEditing) {
     return (
-      <div className="relative inline-block w-full my-1 z-30 animate-in fade-in duration-150">
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative inline-block w-full my-1 z-30 animate-in fade-in duration-150"
+      >
         {label && (
           <span className="block text-[11px] font-semibold text-amber-700 uppercase tracking-wider mb-1">
             {label}
@@ -313,11 +316,17 @@ export function InlineText({
       className={`${className} cursor-text transition-all rounded px-0.5 -mx-0.5 outline-1 outline-dashed outline-transparent hover:outline-amber-400 hover:bg-amber-500/20 relative group/inline`}
     >
       {multiline && Component !== 'span' ? (
-        <FormattedParagraph text={value} className="inline" />
+        <FormattedParagraph text={value} />
       ) : (
         renderInlineFormatting(value)
       )}
-      <span className="opacity-0 group-hover/inline:opacity-100 transition-opacity ml-1.5 inline-flex items-center gap-1 text-amber-500 align-baseline">
+      <span
+        className={`opacity-0 group-hover/inline:opacity-100 transition-opacity inline-flex items-center gap-1 text-amber-500 ${
+          multiline && Component !== 'span'
+            ? 'absolute top-1.5 right-1.5 bg-amber-50/95 border border-amber-200 px-1.5 py-0.5 rounded-md shadow-2xs'
+            : 'ml-1.5 align-baseline'
+        }`}
+      >
         <Pencil className="w-3 h-3 inline-block" />
         {onDelete && (
           confirmingDelete ? (

@@ -184,7 +184,7 @@ export function FormattedParagraph({ text, className = '' }: { text: string; cla
           <img
             src={src}
             alt={caption || 'Obrázek v článku'}
-            className="w-full max-h-[560px] object-cover"
+            className="w-full h-auto block"
             loading="lazy"
           />
         </div>

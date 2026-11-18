@@ -80,6 +80,9 @@
     "blog.ctaBoxTitle": "Chcete si přečíst víc?",
     "blog.ctaBoxDesc": "V samostatné sekci blogu najdete kompletní archiv textů přehledně rozdělený do témat.",
     "blog.ctaBoxBtn": "Přejít do kompletního archivu blogu",
+    "article.authorBio": "Žijeme v době informačního přetlaku, který vede ke zmatkům a chaosu. Chci učit lidi vidět kontext, užitečnost a ověřená fakta.",
+    "article.authorManifestLink": "Prohlédnout osobní manifest a časovou osu →",
+    "article.authorInstagramLabel": "Instagram @neztrat_se_v_info",
     "interests.backBtn": "Zpět na hlavní portfolio",
     "interests.kickerLeft": "Volný čas & Regenerace",
     "interests.kickerRightArchive": "Všechny aktivity",
@@ -111,7 +114,7 @@
     "authorRole": "Práce s informacemi · Informační gramotnost",
     "authorEmail": "kata.kalivodova@gmail.com",
     "authorLocation": "Brno / Opálka, Česká republika",
-    "photoUrl": "./assets/images/profile_avatar_custom.png",
+    "photoUrl": "./assets/images/custom_34b27bac1d32.png",
     "photoAlt": "InfoStratég – profilový obrázek @neztrat_se_v_info",
     "heroHeadline": "Od informačního chaosu k porozumění a kontextu",
     "heroSubhead": "Žijeme v době informačního přetlaku, který vede ke zmatkům a chaosu. Chci učit lidi vidět kontext, užitečnost a ověřená fakta.",
@@ -517,8 +520,71 @@
       ]
     }
   ],
-  "posts": [],
-  "blogTopics": [],
+  "posts": [
+    {
+      "id": "post-zpomalit-2026",
+      "title": "Proč v době informačního přetlaku potřebujeme zpomalit?",
+      "topic": "Informační sítě",
+      "topics": [
+        "Informační sítě",
+        "Práce s informacemi"
+      ],
+      "date": "Listopad 2026",
+      "readTime": "5 min čtení",
+      "imageUrl": "./assets/aistudio/proc-zpomalit-hero-cover-edit_1e871828.png",
+      "annotation": "Žijeme v informační společnosti. Zprávy se na nás valí ze všech stran a je pro nás prakticky nemožné vše zpracovávat a zároveň si zachovat klidnou a zdravou mysl.",
+      "featuredQuote": "Informační tok už nikdo z nás nezastaví. Všichni ale můžeme ovlivnit, co a kolik si z něj pustíme do hlavy.",
+      "content": [
+        "Žijeme v informační společnosti. Zprávy se na nás valí ze všech stran a je pro nás prakticky nemožné vše zpracovávat a zároveň si zachovat klidnou a zdravou mysl.",
+        "Naše mozky nejsou schopné všechny tyto informace kriticky zpracovávat, proto dochází k tomu, že je filtrujeme nebo konzumujeme a slepě posíláme dál. Někteří z nás už dokonce zaujali vyhýbavý postoj ([tady se můžete podívat, kolik procent z dotázaných se záměrně zpravodajství vyhýbá](https://reutersinstitute.politics.ox.ac.uk/digital-news-report/2026)).",
+        "A není se čemu divit. Od roku 2010, kdy u nás zažívá internet, a především sociální sítě, největší boom, se příliv zpráv a informací mnohonásobně zvýšil.",
+        "Já sama jsem ve svém telefonu přešla na režim Do Not Disturb 24/7. Ztlumila jsem si všechny notifikace a upozornění dostávám jen na hovory a zprávy od svých nejbližších.",
+        "Sociální sítě a zprávy otevírám až ve chvíli, kdy jsem na ně psychicky připravená.",
+        "![](./assets/images/clanek_zpomalit_01_telefon.jpg)",
+        "## Data: Jak se mediální svět zrychluje a narůstá objem informací",
+        "Objem informací rapidně narůstá. Jak na zpravodajských, tak na sociálních sítích.",
+        "Sehnat čísla sdílených příspěvků a přesdílených informací není tak jednoduché, proto jsem se pustila do jednoduššího průzkumu – přibližný počet indexovaných článků na nejznámějších českých zpravodajských serverech novinky.cz a seznamzpravy.cz (fungují od roku 2016) na Googlu*.",
+        "![](./assets/images/clanek_zpomalit_02_graf_novinky.jpg)",
+        "![](./assets/images/clanek_zpomalit_03_graf_seznamzpravy.jpg)",
+        "U obou serverů vidíme, jak počet článků začal v roce 2021 stoupat. Důvodů může být hned několik.",
+        "Kromě virové epidemie a napadení Ukrajiny může hrát významnou roli také vývoj umělé inteligence, který začal nabírat raketové rychlosti hlavně v posledních dvou letech.",
+        "Usnadňuje a zrychluje práci ve spoustě oblastí a značně může pomáhat i v rychlosti při psaní článků.",
+        "I tak se ale musím přiznat, že takový rozdíl mezi loňským a letošním – stále ještě probíhajícím – rokem mě hodně překvapil. Na Novinkách se jedná o skok z 21 300 článků na 38 000 článků (to je o 16 700 článků více) a průměrný počet článků na den skočil z 58,4 na 104,1 (to je o 45,7 článků na den více).",
+        "![](./assets/images/clanek_zpomalit_04_graf_novinky_den.jpg)",
+        "A to připomínám, že se jedná jen o jeden český zpravodajský server.",
+        "Zkusila jsem tedy zapátrat i v zahraničních zpravodajských serverech. Musím konstatovat, že získat historická data o indexovaných článcích na Googlu u zahraničních serverů bylo náročnější, než třeba právě u Novinek nebo Seznam Zpráv.",
+        "V průběhu let docházelo ke změnám URL struktur a jediný server, u kterého se mi to podařilo (ačkoliv tam změny struktury a domény také byly), bylo BBC News.",
+        "![](./assets/images/clanek_zpomalit_05_graf_bbc.jpg)",
+        "U BBC News vidíme prudký skok o rok dříve – mezi lety 2024 a 2025 (z 66 600 na 91 000 článků), zatímco v roce 2026 se tempo růstu ustálilo.",
+        "## Co dělá informační přetlak s naším mozkem",
+        "Rozvoj internetu a rychlého a snadného přístupu k informacím nás ovlivňuje. Objem zpráv se zvětšuje, kapacita mozku zůstává stejná.",
+        "Postupně se sice učíme, jak takový nával zpracovávat a filtrovat, i tak se ale zhoršuje naše schopnost soustředění.",
+        "To pak vede k nepozornému čtení a tím pádem může dojít ke zkreslování faktů a neúmyslnému šíření zavádějících informací.",
+        "A v neposlední řadě také k informační úzkosti.",
+        "Neříkám, že bychom se teď měli všichni odpojit od internetu, vyhodit televize a vrátit se zpátky k novinovým článkům. Tímhle stylem bychom v dnešním světě moc dlouho nepřežili.",
+        "## Jak z informačního kolotoče vystoupit",
+        "Je důležité nastavit si hranice. Nastavit si omezený čas na sociálních sítích a zpravodajských serverech, vypnout si notifikace v aplikacích a když se nudíme, vymyslet si jinou činnost než bezcílné scrollování.",
+        "Zpomalení ale není jen o odložení telefonu. Je o tom, jak změníme svůj přístup k informacím.",
+        "- **Pořádek v informacích:** Místo sledování deseti zpravodajských webů v reálném čase si vyberte 2–3 kvalitní zdroje a sledujte denní a týdenní souhrny.",
+        "- **Pravidlo 3 otázek před sdílením zprávy:** Je zpráva vzhledem ke kontextu relevantní, má podložitelné informace? Nechce zpráva jen vyvolat v lidech silnou emoci? Bude zpráva mému okolí užitečná?",
+        "- **Rozlišování mezi typy informací:** Jde o zpravodajství, komentář nebo clickbaitovou zprávu? Nastavte si to, jak se k jednotlivým typům informací budete stavět.",
+        "![](./assets/images/clanek_zpomalit_06_hlava_fokus.jpg)",
+        "Informační tok už nikdo z nás nezastaví. Všichni ale můžeme ovlivnit, co a kolik si z něj pustíme do hlavy. Stačí začít jedním malým krokem – třeba tím, že si dnes večer vypnete notifikace nebo se před příštím sdílením na vteřinu zastavíte.",
+        "Jakmile totiž získáme nad informacemi alespoň základní odstup, mnohem snáz v nich začneme rozlišovat podstatná fakta od pouhého šumu a clickbaitu.",
+        "A právě na to, jaké jednotlivé typy informací existují, jak je rozpoznat a jak s nimi pracovat, se podíváme v příštím článku.",
+        "*Zdroj dat: Vlastní výzkum na základě přibližného počtu indexovaných článků na doménách novinky.cz, seznamzpravy.cz a bbc.com/news získaných pomocí vyhledávacích operátorů Google (site:) a časových filtrů za období 2010–2026 (hodnoty roku 2026 odpovídají stavu k 4. listopadu 2026). Google průběžně vyřazuje starší URL z indexu a mění algoritmy, nejde tedy o kompletní archiv, ale o orientační trend.*"
+      ],
+      "tags": [
+        "Informační sítě",
+        "Práce s informacemi",
+        "Informační přetlak"
+      ]
+    }
+  ],
+  "blogTopics": [
+    "Informační sítě",
+    "Práce s informacemi"
+  ],
   "interests": [
     {
       "id": "int-1",

@@ -20,7 +20,7 @@ import {
   ArrowRight,
   Instagram,
 } from 'lucide-react';
-import { type BlogPost, getSiteText } from '../data/portfolioData';
+import { type BlogPost, type ManifestData, getPostTopics, getSiteText } from '../data/portfolioData';
 import { InlineText, InlineImage, PRESET_PORTFOLIO_IMAGES } from './InlineEdit';
 import { FormattedParagraph } from './FormattedArticleContent';
 import { useConfirm } from './ConfirmModal';
@@ -37,6 +37,7 @@ interface ArticleDetailViewProps {
   };
   siteTexts?: Record<string, string>;
   onUpdateSiteText?: (key: string, value: string) => void;
+  onUpdateManifest?: (updated: Partial<ManifestData>) => void;
   isAdmin: boolean;
   onBackToBlog: () => void;
   onBackToHome: () => void;
@@ -52,6 +53,7 @@ export function ArticleDetailView({
   author,
   siteTexts = {},
   onUpdateSiteText,
+  onUpdateManifest,
   isAdmin,
   onBackToBlog,
   onBackToHome,
@@ -178,7 +180,9 @@ export function ArticleDetailView({
               {getSiteText(siteTexts, 'article.breadcrumbHome', 'Portfolio')}
             </button>
             <span aria-hidden="true" className="text-stone-300 font-light mx-1">/</span>
-            <span className="text-stone-900 font-semibold">{post.topic}</span>
+            <span className="text-stone-900 font-semibold">
+              {getPostTopics(post).join(' · ')}
+            </span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -260,14 +264,28 @@ export function ArticleDetailView({
           
           {/* Metadata Kicker row */}
           <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-stone-600 tracking-wide uppercase">
-            <span className="inline-flex items-center px-3 py-1 rounded-md bg-stone-900 text-white font-semibold text-[11px] shadow-2xs">
-              <InlineText
-                value={post.topic}
-                onSave={(val) => onUpdatePost(post.id, { topic: val })}
-                isAdmin={isAdmin}
-                label="Téma článku"
-              />
-            </span>
+            {getPostTopics(post).map((topicLabel, tIdx) => (
+              <span
+                key={`${topicLabel}-${tIdx}`}
+                className="inline-flex items-center px-3 py-1 rounded-md bg-stone-900 text-white font-semibold text-[11px] shadow-2xs"
+              >
+                <InlineText
+                  value={topicLabel}
+                  onSave={(val) => {
+                    const currentTopics = getPostTopics(post);
+                    const updatedTopics = currentTopics.map((t, idx) =>
+                      idx === tIdx ? val : t
+                    );
+                    onUpdatePost(post.id, {
+                      topic: updatedTopics[0] || val,
+                      topics: updatedTopics,
+                    });
+                  }}
+                  isAdmin={isAdmin}
+                  label="Téma článku"
+                />
+              </span>
+            ))}
             <span aria-hidden="true" className="text-stone-300 font-light mx-1">|</span>
             <span className="inline-flex items-center gap-1">
               <Calendar className="w-3.5 h-3.5 text-stone-400" />
@@ -325,35 +343,6 @@ export function ArticleDetailView({
             aspectClass="aspect-16/9"
           />
         </div>
-
-        {/* Featured Pullquote Box (if present or in admin mode) */}
-        {(post.featuredQuote || isAdmin) && (
-          <div className="my-10 p-6 sm:p-8 bg-white rounded-2xl border-2 border-stone-900/10 shadow-sm relative">
-            <blockquote className="italic text-stone-900 text-lg sm:text-xl md:text-2xl font-serif leading-relaxed">
-              <span className="select-none text-stone-400">„</span>
-              <InlineText
-                value={(post.featuredQuote || '').replace(/^["„“”]/, '').replace(/["„“”]$/, '').trim()}
-                onSave={(val) => {
-                  const cleaned = val.replace(/^["„“”]/, '').replace(/["„“”]$/, '').trim();
-                  onUpdatePost(post.id, { featuredQuote: cleaned });
-                }}
-                isAdmin={isAdmin}
-                placeholder="Klikněte pro vložení klíčové myšlenky článku..."
-                as="span"
-                multiline
-                rows={2}
-                label="Klíčová myšlenka (Pullquote)"
-              />
-              <span className="select-none text-stone-400">“</span>
-            </blockquote>
-            <div className="mt-3 flex items-center justify-between text-xs text-stone-500">
-              <span className="font-semibold text-stone-700 uppercase tracking-wider text-[10px]">
-                Klíčová myšlenka článku
-              </span>
-              <span>Káťa Kalivodová</span>
-            </div>
-          </div>
-        )}
 
         {/* Article Body Content */}
         <div className="space-y-6 text-stone-800 text-base sm:text-lg leading-relaxed pt-2">
@@ -417,6 +406,7 @@ export function ArticleDetailView({
                   <div className="relative flex items-start justify-between gap-3">
                     <div className="flex-1">
                       <InlineText
+                        as="div"
                         value={item}
                         onSave={(newVal) => {
                           const updated = [...post.content];
@@ -534,33 +524,89 @@ export function ArticleDetailView({
           </a>
           <div className="flex-1 text-center sm:text-left space-y-2">
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-              <h3 className="text-lg font-bold text-[#0C1E34]">{author.name}</h3>
+              <h3 className="text-lg font-bold text-[#0C1E34]">
+                <InlineText
+                  value={author.name}
+                  onSave={(val) => onUpdateManifest?.({ authorName: val })}
+                  isAdmin={isAdmin && Boolean(onUpdateManifest)}
+                  label="Jméno autorky v medailonku"
+                />
+              </h3>
               <span className="text-xs text-[#0C1E34]/80 font-mono font-medium">
-                ({author.location})
+                (
+                <InlineText
+                  value={author.location}
+                  onSave={(val) => onUpdateManifest?.({ authorLocation: val })}
+                  isAdmin={isAdmin && Boolean(onUpdateManifest)}
+                  label="Lokalita v medailonku"
+                />
+                )
               </span>
             </div>
-            <p className="text-xs text-[#0C1E34] font-medium">{author.role}</p>
-            <p className="text-xs text-slate-600 leading-relaxed pt-1">
-              High-tech akademický profil informační vědy. Zkoumám hluboké čtení, digitální kurátorství, mediální gramotnost a etické rozhraní lidského myšlení s AI. Hledej kontext.
+            <p className="text-xs text-[#0C1E34] font-medium">
+              <InlineText
+                value={author.role}
+                onSave={(val) => onUpdateManifest?.({ authorRole: val })}
+                isAdmin={isAdmin && Boolean(onUpdateManifest)}
+                label="Role / zaměření v medailonku"
+              />
             </p>
+            <div className="text-xs text-slate-600 leading-relaxed pt-1">
+              <InlineText
+                as="div"
+                value={getSiteText(
+                  siteTexts,
+                  'article.authorBio',
+                  'High-tech akademický profil informační vědy. Zkoumám hluboké čtení, digitální kurátorství, mediální gramotnost a etické rozhraní lidského myšlení s AI. Hledej kontext.'
+                )}
+                onSave={(val) => onUpdateSiteText?.('article.authorBio', val)}
+                isAdmin={isAdmin}
+                multiline
+                rows={3}
+                label="Text v autorském medailonku"
+              />
+            </div>
             <div className="pt-2 flex flex-wrap items-center justify-center sm:justify-start gap-3">
               <button
                 type="button"
-                onClick={onBackToHome}
+                onClick={() => {
+                  if (!isAdmin) onBackToHome();
+                }}
                 className="text-xs font-semibold text-[#0C1E34] hover:text-[#10B981] underline cursor-pointer transition-colors"
               >
-                Prohlédnout osobní manifest a časovou osu →
+                <InlineText
+                  value={getSiteText(
+                    siteTexts,
+                    'article.authorManifestLink',
+                    'Prohlédnout osobní manifest a časovou osu →'
+                  )}
+                  onSave={(val) => onUpdateSiteText?.('article.authorManifestLink', val)}
+                  isAdmin={isAdmin}
+                  label="Odkaz na manifest v medailonku"
+                />
               </button>
               <span className="text-slate-300">·</span>
               <a
                 href="https://www.instagram.com/neztrat_se_v_info"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={(e) => {
+                  if (isAdmin) e.preventDefault();
+                }}
                 className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#E1306C] hover:underline transition-colors"
                 title="Sledovat InfoStratég na Instagramu"
               >
                 <Instagram className="w-3.5 h-3.5" />
-                <span>Instagram @neztrat_se_v_info</span>
+                <InlineText
+                  value={getSiteText(
+                    siteTexts,
+                    'article.authorInstagramLabel',
+                    'Instagram @neztrat_se_v_info'
+                  )}
+                  onSave={(val) => onUpdateSiteText?.('article.authorInstagramLabel', val)}
+                  isAdmin={isAdmin}
+                  label="Instagram odkaz v medailonku"
+                />
               </a>
             </div>
           </div>
@@ -605,7 +651,9 @@ export function ArticleDetailView({
                     </div>
                     <div className="p-4 sm:p-5">
                       <div className="flex items-center gap-2 text-[11px] text-stone-500 mb-2">
-                        <span className="font-semibold text-stone-800">{rPost.topic}</span>
+                        <span className="font-semibold text-stone-800">
+                          {getPostTopics(rPost).join(' · ')}
+                        </span>
                         <span aria-hidden="true" className="text-stone-300">|</span>
                         <span>{rPost.readTime}</span>
                       </div>
