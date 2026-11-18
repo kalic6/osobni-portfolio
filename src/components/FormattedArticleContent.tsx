@@ -141,7 +141,7 @@ export function FormatToolbar({ textareaRef, value, onChange }: FormatToolbarPro
       <button
         type="button"
         onMouseDown={(e) => e.preventDefault()}
-        onClick={() => applyFormat('![Popis obrázku](', ')', '/src/assets/images/blog_info_literacy_1793721968918.jpg')}
+        onClick={() => applyFormat('![Popis obrázku](', ')', './assets/images/blog_info_literacy_1793721968918.jpg')}
         className="inline-flex items-center gap-1 px-2 py-1 rounded bg-white hover:bg-stone-200 text-stone-800 border border-stone-300 transition-colors cursor-pointer text-xs"
         title="Vložit obrázek do článku (![Popisek](url))"
       >

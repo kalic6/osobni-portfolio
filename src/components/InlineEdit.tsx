@@ -369,15 +369,15 @@ export function InlineText({
 
 // Preset images available in app
 export const PRESET_PORTFOLIO_IMAGES = [
-  { label: 'InfoStratég – Nový profilový obrázek (Amulet / Kompas)', url: '/assets/aistudio/profile_picture_c1a456ff.jpeg' },
-  { label: 'InfoStratég – Brand vizuál & Moodboard', url: '/assets/aistudio/vizual_navrh2_504def8a.jpeg' },
-  { label: 'Původní portrét (Káťa Kalivodová)', url: '/src/assets/images/portrait_kata_manifest_1793720229771.jpg' },
-  { label: 'Otevřený sešit & výzkum', url: '/src/assets/images/blog_info_literacy_1793721968918.jpg' },
-  { label: 'Digitální data & poznámky', url: '/src/assets/images/blog_digital_wellbeing_1793721966575.jpg' },
-  { label: 'Knihy a čtení', url: '/src/assets/images/interest_books_reading_1793720231318.jpg' },
-  { label: 'Analogová fotografie', url: '/src/assets/images/interest_analog_photo_1793720230936.jpg' },
-  { label: 'Horský hřeben', url: '/src/assets/images/interest_mountain_hiking_1793720233561.jpg' },
-  { label: 'Kreativní workshop', url: '/src/assets/images/interest_community_workshop_1793720232486.jpg' },
+  { label: 'InfoStratég – Nový profilový obrázek (Amulet / Kompas)', url: './assets/aistudio/profile_picture_c1a456ff.jpeg' },
+  { label: 'InfoStratég – Brand vizuál & Moodboard', url: './assets/aistudio/vizual_navrh2_504def8a.jpeg' },
+  { label: 'Původní portrét (Káťa Kalivodová)', url: './assets/images/portrait_kata_manifest_1793720229771.jpg' },
+  { label: 'Otevřený sešit & výzkum', url: './assets/images/blog_info_literacy_1793721968918.jpg' },
+  { label: 'Digitální data & poznámky', url: './assets/images/blog_digital_wellbeing_1793721966575.jpg' },
+  { label: 'Knihy a čtení', url: './assets/images/interest_books_reading_1793720231318.jpg' },
+  { label: 'Analogová fotografie', url: './assets/images/interest_analog_photo_1793720230936.jpg' },
+  { label: 'Horský hřeben', url: './assets/images/interest_mountain_hiking_1793720233561.jpg' },
+  { label: 'Kreativní workshop', url: './assets/images/interest_community_workshop_1793720232486.jpg' },
 ];
 
 interface InlineImageProps {

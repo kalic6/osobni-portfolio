@@ -593,7 +593,7 @@ export const initialPortfolioData: PortfolioDatabase = {
     authorRole: "High-tech akademický profil informační vědy | @neztrat_se_v_info",
     authorEmail: "kata.kalivodova@gmail.com",
     authorLocation: "Brno / Opálka, Česká republika",
-    photoUrl: "/assets/aistudio/profile_picture_c1a456ff.jpeg",
+    photoUrl: "./assets/aistudio/profile_picture_c1a456ff.jpeg",
     photoAlt: "InfoStratég – profilový obrázek @neztrat_se_v_info",
     heroHeadline: "Informace bez porozumění jsou jen šum. Hledej kontext.",
     heroSubhead: "High-tech akademický profil informační vědy. Zkoumám kognitivní odolnost, hluboké čtení a etické mantinely práce s daty a umělou inteligencí.",
@@ -884,12 +884,12 @@ export const initialPortfolioData: PortfolioDatabase = {
       topic: "Informační gramotnost",
       date: "28. října 2025",
       readTime: "5 min čtení",
-      imageUrl: "/src/assets/images/blog_info_literacy_1793721968918.jpg",
+      imageUrl: "./assets/images/blog_info_literacy_1793721968918.jpg",
       annotation: "Praktická reflexe z mých workshopů na středních školách – proč grafy bez kontextu matou a jak vytvořit bezpečný prostor pro zvídavost místo pasivního přejímání titulků.",
       featuredQuote: "Informační gramotnost nezačíná u sofistikovaných vyhledávacích operátorů, ale u odvahy přiznat si: ‚Tohle ještě nevím, musím se podívat ke zdroji.‘",
       content: [
         "Když jsem začínala lektorovat na středních školách, často jsem narážela na to, že studenti nepovažují ověřování informací za dovednost, ale za **nudnou povinnost**. Dokud jim neukážete, jak snadno lze pomocí oříznuté osy Y v grafu vyrobit z nepatrné odchylky dramatickou senzaci.",
-        "![Ukázka z praktického workshopu: Rozbor klamavého grafu na reálných datech z médií](/src/assets/images/blog_digital_wellbeing_1793721966575.jpg)",
+        "![Ukázka z praktického workshopu: Rozbor klamavého grafu na reálných datech z médií](./assets/images/blog_digital_wellbeing_1793721966575.jpg)",
         "### Hra na informační detektivy",
         "Místo teoretických přednášek o metodách fakt-checkingu jsme začali hrát hru na informační detektivy. Každý tým dostane virální příspěvek a má za úkol dohledat ==původní vědeckou studii==, ze které tvrzení vzešlo. Ten moment, kdy zjistí, že původní výzkum byl proveden na deseti myších a bulvár z toho udělal univerzální lék, je k nezaplacení.",
         "> Klíčem k úspěchu není moralizovat, ale probudit přirozený detektivní instinkt. Jakmile mladý člověk zažije radost z odhalení kontextu, jeho informační imunita dramaticky vzroste."
@@ -902,7 +902,7 @@ export const initialPortfolioData: PortfolioDatabase = {
       topic: "Práce s informacemi",
       date: "14. října 2025",
       readTime: "6 min čtení",
-      imageUrl: "/src/assets/images/blog_digital_wellbeing_1793721966575.jpg",
+      imageUrl: "./assets/images/blog_digital_wellbeing_1793721966575.jpg",
       annotation: "Když jazykové modely chrlí odpovědi během vteřiny, cena lidského ověření, hluboké kontextualizace a etického třídění strmě roste.",
       featuredQuote: "V moři automaticky vygenerovaného textu se lidský úsudek stává nejvzácnějším a nejpotřebnějším kurátorským nástrojem.",
       content: [
@@ -918,7 +918,7 @@ export const initialPortfolioData: PortfolioDatabase = {
       topic: "Knížky a publikace",
       date: "2. září 2025",
       readTime: "4 min čtení",
-      imageUrl: "/src/assets/images/interest_books_reading_1793720231318.jpg",
+      imageUrl: "./assets/images/interest_books_reading_1793720231318.jpg",
       annotation: "O tom, jak fyzická architektura knihoven, klasifikační systémy a filozofie třídění předurčují, jakým způsobem vnímáme svět a vztahy mezi myšlenkami.",
       featuredQuote: "Kniha není jen papírové médium pro text, je to ohraničený prostor pro soustředění a trpělivost, kterou nám dnešní digitální rozhraní systematicky kradou.",
       content: [
@@ -934,7 +934,7 @@ export const initialPortfolioData: PortfolioDatabase = {
       topic: "Z osobního života",
       date: "18. srpna 2025",
       readTime: "5 min čtení",
-      imageUrl: "/src/assets/images/interest_mountain_hiking_1793720233561.jpg",
+      imageUrl: "./assets/images/interest_mountain_hiking_1793720233561.jpg",
       annotation: "Osobní zápisky z týdne na hřebenech bez telefonního signálu. Jak se po návratu do online světa mění vnímání informačního šumu a co si z hor odnáším do práce.",
       featuredQuote: "Když vypnete notifikace, zjistíte, že většina věcí, které se tváří jako urgentní, jsou ve skutečnosti jen hlasité.",
       content: [
@@ -950,7 +950,7 @@ export const initialPortfolioData: PortfolioDatabase = {
       topic: "Informační gramotnost",
       date: "5. července 2025",
       readTime: "7 min čtení",
-      imageUrl: "/src/assets/images/interest_community_workshop_1793720232486.jpg",
+      imageUrl: "./assets/images/interest_community_workshop_1793720232486.jpg",
       annotation: "Jak navrhovat vzdělávací moduly, které netrestají za chybu, ale probouzejí radost z kritického pátrání po faktech v reálném životě.",
       featuredQuote: "Lidé se nechtějí nechat poučovat o tom, co je správné. Chtějí sami přijít na kloub tomu, jak věci doopravdy fungují.",
       content: [
@@ -966,7 +966,7 @@ export const initialPortfolioData: PortfolioDatabase = {
       id: "int-1",
       title: "Pomalé analogové čtení",
       category: "Knihy & myšlení",
-      imageUrl: "/src/assets/images/interest_books_reading_1793720231318.jpg",
+      imageUrl: "./assets/images/interest_books_reading_1793720231318.jpg",
       activityFrequency: "Každodenní ranní rituál",
       personalNote: "Káva a dlouhý tištěný text předtím, než otevřu první displej. Pomáhá mi nastartovat hluboké soustředění a udržet klidnou mysl.",
       featuredOnHome: true,
@@ -976,7 +976,7 @@ export const initialPortfolioData: PortfolioDatabase = {
       id: "int-2",
       title: "Analogová 35mm fotografie",
       category: "Vizuální tvorba",
-      imageUrl: "/src/assets/images/interest_analog_photo_1793720230936.jpg",
+      imageUrl: "./assets/images/interest_analog_photo_1793720230936.jpg",
       activityFrequency: "Na cestách a při toulkách městem",
       personalNote: "Klasický kinofilm a mechanická Leica. 36 políček mě učí vážit si každého záběru, vnímat světlo a nespěchat.",
       featuredOnHome: true,
@@ -986,7 +986,7 @@ export const initialPortfolioData: PortfolioDatabase = {
       id: "int-3",
       title: "Horská turistika & treking",
       category: "Pohyb & příroda",
-      imageUrl: "/src/assets/images/interest_mountain_hiking_1793720233561.jpg",
+      imageUrl: "./assets/images/interest_mountain_hiking_1793720233561.jpg",
       activityFrequency: "Víkendové přechody a letní expedice",
       personalNote: "S batohem do sedel a na hřebeny. Místo, kde utichá informační šum a zůstává jen rytmus kroků a čistý obzor.",
       featuredOnHome: true,
@@ -996,7 +996,7 @@ export const initialPortfolioData: PortfolioDatabase = {
       id: "int-4",
       title: "Komunitní setkávání & debaty",
       category: "Lidé & společnost",
-      imageUrl: "/src/assets/images/interest_community_workshop_1793720232486.jpg",
+      imageUrl: "./assets/images/interest_community_workshop_1793720232486.jpg",
       activityFrequency: "Pravidelné měsíční kruhy a akce",
       personalNote: "Papíry, fixy, dobrý čaj a otevřená diskuse. Sdílení myšlenek tváří v tvář bez algoritmických filtrů.",
       featuredOnHome: true,
@@ -1006,7 +1006,7 @@ export const initialPortfolioData: PortfolioDatabase = {
       id: "int-5",
       title: "Kaligrafie & tvorba písma",
       category: "Řemeslo & design",
-      imageUrl: "/src/assets/images/blog_info_literacy_1793721968918.jpg",
+      imageUrl: "./assets/images/blog_info_literacy_1793721968918.jpg",
       activityFrequency: "Klidné tvořivé večery",
       personalNote: "Psaní redisperem a inkoustem na morušový papír. Fyzický zážitek z rytmu písma, kde neexistuje tlačítko zpět.",
       featuredOnHome: false,
@@ -1016,7 +1016,7 @@ export const initialPortfolioData: PortfolioDatabase = {
       id: "int-6",
       title: "Deskové & strategické hry",
       category: "Strategie & hra",
-      imageUrl: "/src/assets/images/blog_digital_wellbeing_1793721966575.jpg",
+      imageUrl: "./assets/images/blog_digital_wellbeing_1793721966575.jpg",
       activityFrequency: "Páteční herní večery s přáteli",
       personalNote: "Fascinují mě elegantní herní mechanismy, teorie kooperace a řešení komplexních herních plánů.",
       featuredOnHome: false,
@@ -1068,8 +1068,8 @@ export function getStoredPortfolioData(): PortfolioDatabase {
     const finalPhoto =
       !currentPhoto ||
       currentPhoto.includes('portrait_kata_manifest') ||
-      currentPhoto === '/src/assets/images/portrait_kata_manifest_1793720229771.jpg'
-        ? '/assets/aistudio/profile_picture_c1a456ff.jpeg'
+      currentPhoto === '/assets/aistudio/profile_picture_c1a456ff.jpeg'
+        ? './assets/aistudio/profile_picture_c1a456ff.jpeg'
         : currentPhoto;
 
     const manifestData = {

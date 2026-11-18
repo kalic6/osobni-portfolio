@@ -58,7 +58,7 @@ export function Header({
           >
             <div className="w-8 h-8 rounded-full overflow-hidden border border-[#34D399] shadow-2xs shrink-0 bg-[#0C1E34]">
               <img
-                src="/assets/aistudio/profile_picture_c1a456ff.jpeg"
+                src="./assets/aistudio/profile_picture_c1a456ff.jpeg"
                 alt="InfoStratég"
                 className="w-full h-full object-cover group-hover/brand:scale-105 transition-transform"
               />

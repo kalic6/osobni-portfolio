@@ -43,7 +43,7 @@ export function Footer({
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-full overflow-hidden border border-[#34D399] shadow-xs shrink-0 bg-[#0C1E34]">
                 <img
-                  src="/assets/aistudio/profile_picture_c1a456ff.jpeg"
+                  src="./assets/aistudio/profile_picture_c1a456ff.jpeg"
                   alt="InfoStratég"
                   className="w-full h-full object-cover"
                 />

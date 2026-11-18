@@ -41,13 +41,13 @@ export function AdminModal({
 
   // Preset images available in app
   const presetImages = [
-    { label: 'Portrét (Káťa)', url: '/src/assets/images/portrait_kata_manifest_1793720229771.jpg' },
-    { label: 'Otevřený sešit & výzkum', url: '/src/assets/images/blog_info_literacy_1793721968918.jpg' },
-    { label: 'Digitální data & poznámky', url: '/src/assets/images/blog_digital_wellbeing_1793721966575.jpg' },
-    { label: 'Knihy a čtení', url: '/src/assets/images/interest_books_reading_1793720231318.jpg' },
-    { label: 'Analogová fotografie', url: '/src/assets/images/interest_analog_photo_1793720230936.jpg' },
-    { label: 'Horský hřeben', url: '/src/assets/images/interest_mountain_hiking_1793720233561.jpg' },
-    { label: 'Kreativní workshop', url: '/src/assets/images/interest_community_workshop_1793720232486.jpg' },
+    { label: 'Portrét (Káťa)', url: './assets/images/portrait_kata_manifest_1793720229771.jpg' },
+    { label: 'Otevřený sešit & výzkum', url: './assets/images/blog_info_literacy_1793721968918.jpg' },
+    { label: 'Digitální data & poznámky', url: './assets/images/blog_digital_wellbeing_1793721966575.jpg' },
+    { label: 'Knihy a čtení', url: './assets/images/interest_books_reading_1793720231318.jpg' },
+    { label: 'Analogová fotografie', url: './assets/images/interest_analog_photo_1793720230936.jpg' },
+    { label: 'Horský hřeben', url: './assets/images/interest_mountain_hiking_1793720233561.jpg' },
+    { label: 'Kreativní workshop', url: './assets/images/interest_community_workshop_1793720232486.jpg' },
   ];
 
   // Forms state
@@ -586,7 +586,7 @@ export function AdminModal({
                   <div className="flex flex-wrap items-center gap-3 pt-1">
                     <button
                       type="button"
-                      onClick={() => setManifestForm({ ...manifestForm, photoUrl: '/assets/aistudio/profile_picture_c1a456ff.jpeg' })}
+                      onClick={() => setManifestForm({ ...manifestForm, photoUrl: './assets/aistudio/profile_picture_c1a456ff.jpeg' })}
                       className="text-[11px] text-emerald-700 hover:text-emerald-900 font-semibold cursor-pointer underline"
                     >
                       Použít nový brand profilový obrázek
