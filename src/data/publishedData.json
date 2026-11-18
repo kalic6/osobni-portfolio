@@ -1,1 +1,620 @@
-{}
+{
+  "siteTexts": {
+    "site.colorPalette": "infostrateg",
+    "header.brand": "InfoStratég",
+    "header.navHome": "Úvod & Manifest",
+    "header.navTimeline": "Časová osa",
+    "header.navStudy": "Studium",
+    "header.navExperience": "Zkušenosti",
+    "header.navBlog": "Blog",
+    "header.navInterests": "Zájmy",
+    "header.adminBadge": "Režim úprav",
+    "header.logoutBtn": "Odhlásit",
+    "header.loginBtn": "Správa portfolia",
+    "hero.kickerLeft": "InfoStratég",
+    "hero.kickerRight": "Kateřina Kalivodová",
+    "hero.quoteOrigin": "",
+    "hero.timelineBtn": "Prozkoumat časovou osu",
+    "hero.manifestBtnRead": "Přečíst celý manifest",
+    "hero.manifestBtnHide": "Skrýt detailní manifest",
+    "hero.modalManifestTitle": "Manifest pro práci s informacemi v 21. století",
+    "hero.modalAuthorPrefix": "Autorka:",
+    "hero.addParagraphBtn": "Přidat odstavec",
+    "hero.pillarsKickerLeft": "Základní filozofie",
+    "hero.pillarsKickerRight": "Informační gramotnost",
+    "hero.pillarsTitle": "Tři pilíře mého přístupu k informacím",
+    "hero.pillarsSubtitle": "Hodnotové principy, které provází mé studium, práci s informacemi i vizi do budoucna.",
+    "hero.addPillarBtn": "Přidat pilíř",
+    "aiPrinciples.colorPalette": "warm-parchment",
+    "aiPrinciples.kickerLeft": "Etika & Technologie",
+    "aiPrinciples.kickerRight": "Odpovědný přístup",
+    "aiPrinciples.title": "Mé zásady při práci s umělou inteligencí",
+    "aiPrinciples.subtitle": "Generativní AI vnímám jako silný nástroj, který se stal nedílnou součástí každého, kdo nechce zůstat pozadu. Spoustu práce nám ulehčí, ale je potřeba nastavit si v jejím používání jasné mantinely, které mohou negativně ovlivňovat nejen naše názory a přesvědčení, ale také kreativní a kognitivní funkce.",
+    "aiPrinciples.addBtn": "Přidat zásadu",
+    "timeline.kickerLeft": "Interaktivní časová osa",
+    "timeline.kickerRight": "Cesta & Plány",
+    "timeline.title": "Odkud jdu, kde jsem a kam směřuji",
+    "timeline.subtitle": "Etapy, které mě formovaly a dovedly až sem.",
+    "timeline.addBtn": "Přidat nový milník",
+    "timeline.filterAll": "Všechny etapy",
+    "timeline.filterPast": "Odkud jdu",
+    "timeline.filterPresent": "Kde jsem",
+    "timeline.filterFuture": "Kam směřuji",
+    "timeline.detailsLink": "Podrobnosti",
+    "timeline.modalDescTitle": "Popis etapy",
+    "timeline.modalReflectionTitle": "Osobní reflexe & význam pro budoucnost",
+    "timeline.modalHighlightsTitle": "Klíčové milníky & výsledky",
+    "timeline.modalCloseBtn": "Zavřít",
+    "study.backBtn": "Zpět na hlavní portfolio",
+    "study.kickerLeft": "Akademická dráha",
+    "study.kickerRight": "Studované předměty",
+    "study.title": "Studium a odborné předměty",
+    "study.subtitle": "Přehled kurzů, kterými jsem v rámci studia prošla a procházím a reflexe toho, co mi jednotlivé předměty daly.",
+    "study.addBtn": "Přidat předmět",
+    "study.filterAll": "Všechny semestry",
+    "study.searchPlaceholder": "Hledat předmět či dovednost...",
+    "study.commentLabel": "Můj komentář & přínos",
+    "study.projectLabel": "Semestrální projekt:",
+    "experience.backBtn": "Zpět na hlavní portfolio",
+    "experience.kickerLeft": "Profesní praxe",
+    "experience.kickerRight": "Kariéra & Projekty",
+    "experience.title": "Pracovní zkušenosti",
+    "experience.subtitle": "Pozice, které mám za sebou, časová období a má osobní reflexe toho, jak posunuly mé vnímání informační praxe.",
+    "experience.addBtn": "Přidat zkušenost",
+    "experience.reflectionLabel": "Osobní reflexe & co mi pozice dala",
+    "experience.achievementsLabel": "Hlavní přínos a konkrétní výsledky",
+    "experience.skillsLabel": "Dovednosti:",
+    "blog.backBtn": "Zpět na hlavní portfolio",
+    "blog.kickerLeft": "Blogové články",
+    "blog.kickerRightArchive": "Všechny články",
+    "blog.kickerRightHome": "Výběr nejnovějších článků",
+    "blog.titleArchive": "Blog ze světa informací",
+    "blog.titleHome": "Nejnovější články na blogu",
+    "blog.subtitleArchive": "Pravidelné i příležitostné texty, glosy a analýzy ze světa práce s informacemi, informační gramotnosti, informační vědy a vzdělávání.",
+    "blog.subtitleHome": "Věnuji se práci s informacemi, informačním sítím a kritickému myšlení. Všechny články najdete v archivu.",
+    "blog.addPostBtn": "Napsat nový článek",
+    "blog.addTopicBtn": "Nové téma",
+    "blog.filterAll": "Všechna témata",
+    "blog.searchPlaceholder": "Hledat v článcích podle názvu, textu...",
+    "blog.readMoreBtn": "Přečíst celý text",
+    "blog.ctaBoxTitle": "Chcete si přečíst víc?",
+    "blog.ctaBoxDesc": "V samostatné sekci blogu najdete kompletní archiv textů přehledně rozdělený do témat.",
+    "blog.ctaBoxBtn": "Přejít do kompletního archivu blogu",
+    "interests.backBtn": "Zpět na hlavní portfolio",
+    "interests.kickerLeft": "Volný čas & Regenerace",
+    "interests.kickerRightArchive": "Všechny aktivity",
+    "interests.kickerRightHome": "4 vybrané zájmy",
+    "interests.titleArchive": "Všechny osobní zájmy a vášně",
+    "interests.titleHome": "Zájmy a volný čas",
+    "interests.subtitleArchive": "Kompletní přehled všech aktivit, kterým se věnuji mimo práci s daty a výzkum. V administraci můžete hvězdičkou zvolit, které 4 se zobrazí na hlavní stránce.",
+    "interests.subtitleHome": "Aktivity, které mi pomáhají vypnout hlavu a udržují mou vnitřní rovnováhu. Další najdete v samostatné sekci.",
+    "interests.addBtn": "Přidat zájem",
+    "interests.viewAllBtn": "Všechny zájmy",
+    "footer.brand": "Kateřina Kalivodová",
+    "footer.role": "Práce s informacemi · Informační sítě · Vzdělávání k informační gramotnosti",
+    "footer.navTitle": "Obsah portfolia",
+    "footer.navHome": "Úvod & Osobní manifest",
+    "footer.navTimeline": "Časová osa: Odkud jdu, kde jsem, kam směřuji",
+    "footer.navStudy": "Studium",
+    "footer.navExperience": "Pracovní zkušenosti & praxe",
+    "footer.navBlog": "Blog",
+    "footer.navInterests": "Zájmy & osobní vášně",
+    "footer.adminTitle": "Správa obsahu",
+    "footer.adminDesc": "Portfolio disponuje integrovaným systémem správy dat uložených v prohlížeči.",
+    "footer.backupBtn": "Záloha a obnovení dat (JSON)",
+    "footer.loginBtn": "Přihlásit se do režimu úprav",
+    "footer.copyrightRight": "Informační studia",
+    "footer.scrollTopBtn": "Zpět nahoru"
+  },
+  "manifest": {
+    "authorName": "InfoStratég",
+    "authorRole": "Práce s informacemi · Informační gramotnost",
+    "authorEmail": "kata.kalivodova@gmail.com",
+    "authorLocation": "Brno / Opálka, Česká republika",
+    "photoUrl": "./assets/images/profile_avatar_custom.png",
+    "photoAlt": "InfoStratég – profilový obrázek @neztrat_se_v_info",
+    "heroHeadline": "Od informačního chaosu k porozumění a kontextu",
+    "heroSubhead": "Žijeme v době informačního přetlaku, který vede ke zmatkům a chaosu. Chci učit lidi vidět kontext, užitečnost a ověřená fakta.",
+    "manifestQuote": "Základem informační gramotnosti je pro mě schopnost kriticky přemýšlet nad informacemi, které konzumujeme. Nevěřit slepě všem informacím, které se na nás ze všech stran hrnou, ale ověřovat si, jestli v první řadě vůbec dávají smysl.",
+    "manifestQuoteAuthor": "",
+    "manifestPillars": [
+      {
+        "id": "p1",
+        "title": "Cesta k primárnímu zdroji",
+        "description": "Nespokojím se s tím, co \"někde někdo\" napsal. Snažím se vždy dohledat původní zdroje, z kterých informace vychází."
+      },
+      {
+        "id": "p2",
+        "title": "Udržování kritického odstupu",
+        "description": "Než informaci přijmu, ptám se, kdo je autorem, jaký je jeho záměr a zda text neobsahuje logické fauly nebo zkreslení. Nejde jen o to zpochybňovat ostatní, ale zpochybňovat i vlastní myšlenky."
+      },
+      {
+        "id": "p3",
+        "title": "Srozumitelné a etické předávání informací",
+        "description": "Dbám na přesné citování zdrojů a snažím se komplexní témata překládat do přehledné a užitečné podoby pro ostatní."
+      },
+      {
+        "id": "p-1794075076208",
+        "title": "Mentální hygiena",
+        "description": "Cítím, když je čas zhasnout obrazovku a dát si od neustálého přísunu informací pauzu. Nechci upadnout do informační úzkosti a udržet si mozkovou kapacitu v dobré kondici.",
+        "iconName": "Compass"
+      }
+    ],
+    "aiPrinciples": [
+      {
+        "id": "ai-1",
+        "category": "Kognitivní asistence",
+        "title": "AI jako sparring partner, ne sluha, který za mě dělá všechno",
+        "description": "Generativní AI využívám jako asistenta pro rutinní úkoly, analýzu dat a strukturování myšlenek, nikoliv jako náhradu vlastního úsudku nebo zdroj jasných faktů."
+      },
+      {
+        "id": "ai-2",
+        "category": "Ověřování & Human-in-the-loop",
+        "title": "Důsledné ověřování u primárních zdrojů",
+        "description": "Žádné faktické tvrzení vygenerované modelem nepřijímám bez ověření v primárních zdrojích. Zodpovědnost za pravdivost vždy nese člověk."
+      },
+      {
+        "id": "ai-3",
+        "category": "Transparentnost & Integrita",
+        "title": "Ochrana soukromí a citlivých dat",
+        "description": "Do umělé inteligence nikdy nevkládám citlivá data ani důvěrné informace konkrétních lidí."
+      },
+      {
+        "id": "ai-4",
+        "category": "Etika & Soukromí dat",
+        "title": "Zachování vlastního hlasu",
+        "description": "Texty píši vždy vlastním hlasem a nesu plnou odpovědnost za publikovaný obsah."
+      }
+    ],
+    "fullManifestText": [
+      "Pro informační studia jsem se rozhodla z vášně i z přesvědčení. Získávání nových poznatků mi od dětství přináší radost a přirozenou zvídavost. V dnešní době informačního přetlaku však pouhá konzumace nestačí. Snadnost, s jakou informace vznikají a šíří, vyžaduje schopnost se v nich orientovat, chápat jejich kontext a ověřovat si fakta. Mou vizí je pomáhat ostatním, aby se v tomto chaosu neztratili.",
+      "Základem informační gramotnosti je pro mě schopnost kriticky přemýšlet nad informacemi, které konzumujeme. Nevěřit slepě všem informacím, které se na nás ze všech stran hrnou, ale ověřovat si, jestli v první řadě vůbec dávají smysl. Je mi jasné, že není časově reálné ověřovat si osobně informaci po informaci, ale než něco přesdílím nebo rozšířím informaci dál, zamyslím se nad těmito věcmi:",
+      "1) Je informace vzhledem ke kontextu relevantní? (Dává smysl?)",
+      "2) Můžu informaci něčím podložit a argumentovat? Mám ověřené zdroje?",
+      "3) Je informace užitečná?",
+      "Svět technologií, umělé inteligence a datových toků se mění neskutečným tempem. Jako studentka stavím na pokoře k učení a postupně pronikám od ověřených zpravodajských zdrojů stále hlouběji k odbornému poznání. Mým cílem je držet s tímto vývojem krok, tvořit systémy, které lidem usnadní orientaci, a aktivně čelit dezinformacím a manipulacím."
+    ]
+  },
+  "timeline": [
+    {
+      "id": "tl-1",
+      "phase": "past",
+      "phaseLabel": "Odkud jdu",
+      "timePeriod": "2001-2010",
+      "title": "Láska k informacím",
+      "subtitle": "Základní škola Strážov",
+      "organization": "Základní škola Strážov",
+      "location": "Opálka/Strážov",
+      "description": "První přístup k encyklopediím a učení se novým věcem.",
+      "personalReflection": "Už odmalička jsem milovala encyklopedie a knížky, kde jsem nacházela nové informace a učila se, jak věci fungují. V knihovně nejvíce vedlo téma Vesmíru, ale objevovala se tam i Příroda a Technika.",
+      "keyHighlights": [
+        "Získání titulu Čtenář roku 2025"
+      ],
+      "tags": [
+        "První informace",
+        "Encyklopedie",
+        "Učení"
+      ]
+    },
+    {
+      "id": "tl-2",
+      "phase": "past",
+      "phaseLabel": "Odkud jdu",
+      "timePeriod": "2010 - 2014",
+      "title": "Střední škola a první užší zaměření",
+      "subtitle": "Předškolní a mimoškolní pedagogika",
+      "organization": "SOŠPg, Gymnázium a VOŠ",
+      "location": "Karlovy Vary",
+      "description": "Studium pedagogiky v předškolních a mimoškolních institucích včetně praxí.",
+      "personalReflection": "Studium a následná roční praxe v zaměstnání mě utvrdila v tom, že konkrétně tuto činnost vykonávat nechci.",
+      "keyHighlights": [
+        "Úspěšné absolvování maturity",
+        "Roční praxe ve školní družině a mateřské škole"
+      ],
+      "tags": [
+        "Pedagogické studium"
+      ]
+    },
+    {
+      "id": "tl-1793725805342",
+      "phase": "past",
+      "phaseLabel": "Odkud jdu",
+      "timePeriod": "2015 - 2016",
+      "title": "Stěhování do cizího města",
+      "subtitle": "",
+      "organization": "",
+      "location": "Brno",
+      "description": "Kompletní přesun života ze západních Čech na Jižní Moravu.",
+      "personalReflection": "Tento krok mě naučil samostatnosti. Naučila jsem se spravovat si finance, najít si bydlení, práci a nové přátele. Začátky byly hodně divoké a krušné, to musím přiznat, ale naučilo mě to postavit se na vlastní nohy a řídit si sama svůj život.",
+      "keyHighlights": [
+        "Nové bydlení",
+        "Nová práce",
+        "Noví přátelé"
+      ],
+      "tags": [
+        "Stěhování",
+        "Bydlení",
+        "Práce",
+        "Život"
+      ]
+    },
+    {
+      "id": "tl-1793726128589",
+      "phase": "past",
+      "phaseLabel": "Odkud jdu",
+      "timePeriod": "2018 - 2022",
+      "title": "První práce v marketingu",
+      "subtitle": "Obsah a copywriting",
+      "organization": "",
+      "location": "",
+      "description": "Získání prvních zkušeností z marketingu v oblasti obsahu a copywritingu",
+      "personalReflection": "Copywriting byl cíl, ke kterému jsem od ukončení střední školy šla. Psaní jsem milovala a když jsem zjistila, že se jím můžu živit, šla jsem za tím. Později jsem ale zjistila, že to není taková sranda a navíc nejde každý den vyplodit 10 normostran kvalitního textu.",
+      "keyHighlights": [
+        "Správa obsahu webových stránek e-shopu",
+        "Tvorba blogových článků"
+      ],
+      "tags": [
+        "Marketing",
+        "Copywriting",
+        "Obsahový marketing"
+      ]
+    },
+    {
+      "id": "tl-4",
+      "phase": "past",
+      "phaseLabel": "Odkud jdu",
+      "timePeriod": "2024 – 2025",
+      "title": "Seznamování se s generativní umělou inteligencí",
+      "subtitle": "",
+      "organization": "",
+      "location": "",
+      "description": "První práce s jazykovými modely.",
+      "personalReflection": "K umělé inteligenci jsem v době prvního boomu byla hodně opatrná. Pomáhala jsem si při psaní textů, když jsem potřebovala inspiraci (protože pro hotové výstupy byla nepoužitelná), ale zároveň se mi nelíbilo, když ji lidé v mém okolí používali jako každodenního kamaráda na povídání. Bála jsem se, co to s lidmi udělá.",
+      "keyHighlights": [
+        "První zkušenosti s generativní umělou inteligencí"
+      ],
+      "tags": [
+        "AI",
+        "Generativní umělá inteligence"
+      ]
+    },
+    {
+      "id": "tl-3",
+      "phase": "present",
+      "phaseLabel": "Kde jsem",
+      "timePeriod": "2022 - současnost",
+      "title": "Marketing a data v širším kontextu",
+      "subtitle": "",
+      "organization": "",
+      "location": "Brno",
+      "description": "Tvorba marketingových strategií, tvorba automatizovaných scénářů, práce s daty v marketingu.",
+      "personalReflection": "Toto období bylo ze začátku také hodně náročné a divoké. Informací a věcí kolem bylo tolik, že jsem nevěděla, co s nimi a dlouho jsem se v nich \"koupala\". Postupem času jsem se ale naučila, jak k různým věcem přistupovat, jak nad určitými věcmi přemýšlet a dalo mi to skvělou školu.",
+      "keyHighlights": [
+        "Tvorba strategie pro různé typy klientů",
+        "Tvorba automatizovaných scénářů pro komunikaci se zákazníky",
+        "Návrhy dalších postupů na základě posbíraných dat"
+      ],
+      "tags": [
+        "Marketing v širším kontextu",
+        "Data",
+        "Marketingové strategie",
+        "Automatizované scénáře"
+      ]
+    },
+    {
+      "id": "tl-1793727403130",
+      "phase": "present",
+      "phaseLabel": "Kde jsem",
+      "timePeriod": "současnost",
+      "title": "Objevování možností umělé inteligence",
+      "subtitle": "",
+      "organization": "",
+      "location": "",
+      "description": "Používání různých typů nástrojů umělé inteligence.",
+      "personalReflection": "Objevuji, co všechno umělá inteligence zvládne a zároveň si nastavuji vlastní hranice. Všímám si, jak je jednoduché sklouznout k tomu, aby za mě všechno dělala a vymýšlela a nechci k tomuto bodu dojít. Záměrně tak její využívání omezuji na činnosti, které mi urychlí práci. Pokud se ovšem jedná o činnost, kde je potřeba kreativity a přemýšlení, vypínám ji. Co je pro mě strop je pak následná konzultace mých nápadů.",
+      "keyHighlights": [
+        "Nastavení rutin",
+        "Zrychlení práce",
+        "První vytvořená aplikace (pro sebe)"
+      ],
+      "tags": [
+        "Umělá inteligence",
+        "Hranice"
+      ]
+    },
+    {
+      "id": "tl-1793727760082",
+      "phase": "present",
+      "phaseLabel": "Kde jsem",
+      "timePeriod": "2026",
+      "title": "Nalezení oboru a návrat ke studiu",
+      "subtitle": "Informační studia a knihovnictví",
+      "organization": "Filozofická fakulta, Masarykova Univerzita",
+      "location": "Brno",
+      "description": "Studium informačních studií a knihovnictví",
+      "personalReflection": "Delší dobu jsem přemýšlela o návratu ke studiu, ale dlouho jsem nevěděla, k jakému oboru. Když jsem narazila na tento obor a přečetla si o něm informace, hned jsem věděla, že je to ono.",
+      "keyHighlights": [
+        "Úspěšné přijímací zkoušky"
+      ],
+      "tags": [
+        "Informační studia",
+        "Studium",
+        "Univerzita"
+      ]
+    },
+    {
+      "id": "tl-5",
+      "phase": "future",
+      "phaseLabel": "Kam směřuji",
+      "timePeriod": "2027",
+      "title": "Rozšiřování povědomí o práci s informacemi",
+      "subtitle": "",
+      "organization": "",
+      "location": "",
+      "description": "Tvorba obsahu zaměřená na téma práce s informacemi (sociální sítě i offline).",
+      "personalReflection": "Téma práce s informacemi směřující k informační gramotnosti mě poslední léta pálí čím dál víc. Když vidím, jak s nimi lidé neumí nakládat, motivuje mě to začít pro to něco dělat.",
+      "keyHighlights": [
+        "Profil na sociálních sítích zaměřený na práci s informacemi a aktivní sledující"
+      ],
+      "tags": [
+        "Práce s informacemi",
+        "Informační gramotnost"
+      ]
+    },
+    {
+      "id": "tl-6",
+      "phase": "future",
+      "phaseLabel": "Kam směřuji",
+      "timePeriod": "2028 a dál",
+      "title": "Vzdělávání v oblasti informační gramotnosti",
+      "subtitle": "",
+      "organization": "",
+      "location": "",
+      "description": "Vzdělávání v oblasti informační gramotnosti formou osobních školení, workshopů, publikací i online kurzů.",
+      "personalReflection": "Chci, aby se informační gramotnost lidí zvyšovala. V informační společnosti je to více než potřebné a chci k tomu přispět svým dílem.",
+      "keyHighlights": [
+        "Vlastní vzdělávací program na téma Informační gramotnost",
+        "Vlastní workshopy",
+        "Vydané knížky"
+      ],
+      "tags": [
+        "Vzdělávání",
+        "Informační gramotnost",
+        "Workshopy",
+        "Kurzy"
+      ]
+    }
+  ],
+  "courses": [
+    {
+      "id": "c-1794130865153",
+      "code": "AI001",
+      "title": "Elements of AI",
+      "semester": "ZS",
+      "academicYear": "2026/2027",
+      "institution": "Informační studia a knihovnictví",
+      "credits": 2,
+      "status": "Splněno",
+      "comment": "Povědomí o tom, jak umělá inteligence funguje, jsem už měla a tímto kurzem se můj pohled rozšířil. Pochopila jsem, jaké principy využívá a jaké jsou její možnosti a zároveň limity.",
+      "competencies": [
+        "Základy AI"
+      ],
+      "keyProject": ""
+    },
+    {
+      "id": "c-1794131114638",
+      "code": "ISKB02",
+      "title": "Úvod do knihovnictví",
+      "semester": "ZS",
+      "academicYear": "2026/2027",
+      "institution": "Informační studia a knihovnictví",
+      "credits": 4,
+      "status": "Aktuálně studuji",
+      "comment": "Předmět mi pomáhá pochopit základ fungování knihoven, jak se knihovnictví měnilo v průběhu let a jaké by mohly být vize do budoucna.",
+      "competencies": [
+        "Základy knihovnictví"
+      ],
+      "keyProject": ""
+    },
+    {
+      "id": "c-1794131280129",
+      "code": "ISKB03",
+      "title": "Informační služby a vyhledávání",
+      "semester": "ZS",
+      "academicYear": "2026/2027",
+      "institution": "Informační studia a knihovnictví",
+      "credits": 4,
+      "status": "Aktuálně studuji",
+      "comment": "Předmět mi pomáhá dívat se na problémy vyhledávání a práce s informacemi z různých pohledů. Zároveň se učím hledat různé cesty a možnosti, jak nalezené problémy řešit.",
+      "competencies": [
+        "Designové myšlení",
+        "Kritické myšlení"
+      ],
+      "keyProject": "Osobní portfolio, AI projekt, Prototyp služby"
+    },
+    {
+      "id": "c-1794131440492",
+      "code": "ISKB04",
+      "title": "Psaní odborných textů",
+      "semester": "ZS",
+      "academicYear": "2026/2027",
+      "institution": "Informační studia a knihovnictví",
+      "credits": 5,
+      "status": "Aktuálně studuji",
+      "comment": "Předmět mě učí hledat odborné a ověřené informace na správných místech, správně citovat zdroje a psát odborné texty.",
+      "competencies": [
+        "Psaní odborných textů",
+        "Práce s odbornými texty",
+        "Vyhledávání odborných zdrojů"
+      ],
+      "keyProject": "Tvorba odborného hesla na Wikipedii"
+    },
+    {
+      "id": "c-1794131643576",
+      "code": "ISKB08",
+      "title": "Literatura v kulturním kontextu",
+      "semester": "ZS",
+      "academicYear": "2026/2027",
+      "institution": "Informační studia a knihovnictví",
+      "credits": 4,
+      "status": "Aktuálně studuji",
+      "comment": "Díky předmětu se dokážu lépe orientovat v dějinách literatury a nejznámějších dílech. Učí mě hledat aktualizační zdroje, které zaujmou specifickou cílovou skupinu.",
+      "competencies": [
+        "Aktualizační zdroje"
+      ],
+      "keyProject": "Kurátorské portfolio"
+    }
+  ],
+  "experiences": [
+    {
+      "id": "exp-1",
+      "role": "Marketingová specialistka",
+      "organization": "Webkomplet s.r.o.",
+      "period": "06/2022 – dosud",
+      "isCurrent": true,
+      "location": "Brno",
+      "type": "Plný",
+      "summary": "Tvorba marketingových strategií, tvorba automatizovaných scénářů, práce s daty v marketingu, chystání e-mailingových kampaní, správa placených reklam, tvorba obsahového plánu a příspěvků na sociálních sítích.",
+      "comment": "Tato pozice mě naučila přemýšlet komplexně. Vzhledem k širokému záběru jsem poznala spoustu zákoutí nejen marketingu, ale i celkovému pohledu na to, jak firmy fungují a přemýšlí.",
+      "achievements": [],
+      "skills": [
+        "Marketing",
+        "Strategie",
+        "Kampaně",
+        "Komplexní přemýšlení"
+      ]
+    },
+    {
+      "id": "exp-2",
+      "role": "Search Engine Optimization Copywriter",
+      "organization": "Footshop a.s.",
+      "period": "12/2021 – 04/2022",
+      "isCurrent": false,
+      "location": "Remote",
+      "type": "Plný",
+      "summary": "Tvorba textů optimalizovaných pro vyhledávače.",
+      "comment": "Zkušenost byla krátká, ale intenzivní. Vyhovoval mi tone of voice, který firma má a články na blog a popisky se mi v podstatě psaly samy. Bohužel v důsledku špatně cash flow přišlo rušení pozic a moje byla bohužel jednou z nic.",
+      "achievements": [],
+      "skills": [
+        "Copywriting",
+        "On-page SEO"
+      ]
+    },
+    {
+      "id": "exp-3",
+      "role": "Pracovník v marketingu",
+      "organization": "Sportobchod.cz (dnešní Sportega)",
+      "period": "03/2018 – 11/2021",
+      "isCurrent": false,
+      "location": "Brno",
+      "type": "Plný",
+      "summary": "Copywriting - tvorba obsahu (blog, stránky, kategorie, popisky produktů), zaměření na SEO. Odpovědnost za marketingové aktivity ve svěřených segmentech.",
+      "comment": "První setkání s marketingem a odrazový můstek pro další roky.",
+      "achievements": [],
+      "skills": [
+        "Copywriting",
+        "Tvorba obsahu"
+      ]
+    }
+  ],
+  "posts": [],
+  "blogTopics": [],
+  "interests": [
+    {
+      "id": "int-1",
+      "title": "Lezení po šutrech",
+      "category": "Knihy & myšlení",
+      "imageUrl": "./assets/images/interest_books_reading_1793720231318.jpg",
+      "activityFrequency": "Každodenní ranní rituál",
+      "personalNote": "Káva a dlouhý tištěný text předtím, než otevřu první displej. Pomáhá mi nastartovat hluboké soustředění a udržet klidnou mysl.",
+      "featuredOnHome": true,
+      "tags": [
+        "Knihy",
+        "Slow reading",
+        "Rituál"
+      ]
+    },
+    {
+      "id": "int-2",
+      "title": "Lezení po umělých šutrech",
+      "category": "Vizuální tvorba",
+      "imageUrl": "./assets/images/interest_analog_photo_1793720230936.jpg",
+      "activityFrequency": "Na cestách a při toulkách městem",
+      "personalNote": "Klasický kinofilm a mechanická Leica. 36 políček mě učí vážit si každého záběru, vnímat světlo a nespěchat.",
+      "featuredOnHome": true,
+      "tags": [
+        "35mm film",
+        "Dokument",
+        "Trpělivost"
+      ]
+    },
+    {
+      "id": "int-3",
+      "title": "Horská turistika & treking",
+      "category": "Pohyb & příroda",
+      "imageUrl": "./assets/images/interest_mountain_hiking_1793720233561.jpg",
+      "activityFrequency": "Víkendové přechody a letní expedice",
+      "personalNote": "S batohem do sedel a na hřebeny. Místo, kde utichá informační šum a zůstává jen rytmus kroků a čistý obzor.",
+      "featuredOnHome": true,
+      "tags": [
+        "Hory",
+        "Příroda",
+        "Detox"
+      ]
+    },
+    {
+      "id": "int-4",
+      "title": "Kreativní tvorba aplikací",
+      "category": "Lidé & společnost",
+      "imageUrl": "./assets/images/interest_community_workshop_1793720232486.jpg",
+      "activityFrequency": "Pravidelné měsíční kruhy a akce",
+      "personalNote": "Papíry, fixy, dobrý čaj a otevřená diskuse. Sdílení myšlenek tváří v tvář bez algoritmických filtrů.",
+      "featuredOnHome": true,
+      "tags": [
+        "Komunita",
+        "Diskuse",
+        "Spolupráce"
+      ]
+    },
+    {
+      "id": "int-5",
+      "title": "Kreativní tvorba na papíru",
+      "category": "Řemeslo & design",
+      "imageUrl": "./assets/images/blog_info_literacy_1793721968918.jpg",
+      "activityFrequency": "Klidné tvořivé večery",
+      "personalNote": "Psaní redisperem a inkoustem na morušový papír. Fyzický zážitek z rytmu písma, kde neexistuje tlačítko zpět.",
+      "featuredOnHome": false,
+      "tags": [
+        "Kaligrafie",
+        "Typografie",
+        "Řemeslo"
+      ]
+    },
+    {
+      "id": "int-6",
+      "title": "Čtení fiktivních příběhů",
+      "category": "Strategie & hra",
+      "imageUrl": "./assets/images/blog_digital_wellbeing_1793721966575.jpg",
+      "activityFrequency": "Páteční herní večery s přáteli",
+      "personalNote": "Fascinují mě elegantní herní mechanismy, teorie kooperace a řešení komplexních herních plánů.",
+      "featuredOnHome": false,
+      "tags": [
+        "Hry",
+        "Strategie",
+        "Logika"
+      ]
+    },
+    {
+      "id": "int-1793790931867",
+      "title": "Čtení odborných knížek",
+      "category": "Knihy & myšlení",
+      "imageUrl": "./assets/images/interest_books_reading_1793720231318.jpg",
+      "activityFrequency": "Každodenní rituál",
+      "personalNote": "Toto ještě doplním",
+      "featuredOnHome": false,
+      "tags": [
+        "Aktivita"
+      ]
+    }
+  ]
+}
