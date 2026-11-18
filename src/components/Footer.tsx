@@ -12,6 +12,7 @@ interface FooterProps {
   onOpenBackup: () => void;
   onOpenLogin: () => void;
   isAdmin: boolean;
+  canManagePortfolio?: boolean;
   onNavigate?: (view: 'home' | 'study' | 'experience' | 'blog', anchor?: string) => void;
 }
 
@@ -25,6 +26,7 @@ export function Footer({
   onOpenBackup,
   onOpenLogin,
   isAdmin,
+  canManagePortfolio = false,
   onNavigate,
 }: FooterProps) {
   const scrollToTop = () => {
@@ -37,7 +39,7 @@ export function Footer({
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 pb-12 border-b border-[#1E3A5F]">
           
           {/* Column 1: Brand & Role */}
-          <div className="md:col-span-5 space-y-3">
+          <div className={`${canManagePortfolio ? 'md:col-span-5' : 'md:col-span-7'} space-y-3`}>
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-full overflow-hidden border border-[#34D399] shadow-xs shrink-0 bg-[#0C1E34]">
                 <img
@@ -87,7 +89,7 @@ export function Footer({
           </div>
 
           {/* Column 2: Navigation Links */}
-          <div className="md:col-span-4 space-y-2">
+          <div className={`${canManagePortfolio ? 'md:col-span-4' : 'md:col-span-5'} space-y-2`}>
             <span className="text-xs uppercase tracking-wider text-stone-400 font-semibold block mb-3">
               <InlineText
                 value={getSiteText(siteTexts, 'footer.navTitle', 'Obsah portfolia')}
@@ -165,54 +167,56 @@ export function Footer({
             </ul>
           </div>
 
-          {/* Column 3: Data & Admin */}
-          <div className="md:col-span-3 space-y-3">
-            <span className="text-xs uppercase tracking-wider text-stone-400 font-semibold block mb-3">
-              <InlineText
-                value={getSiteText(siteTexts, 'footer.adminTitle', 'Správa obsahu')}
-                onSave={(val) => onUpdateSiteText?.('footer.adminTitle', val)}
-                isAdmin={isAdmin}
-                label="Nadpis správy obsahu v patičce"
-              />
-            </span>
-            <div className="text-xs text-stone-400 leading-relaxed font-normal">
-              <InlineText
-                value={getSiteText(
-                  siteTexts,
-                  'footer.adminDesc',
-                  'Portfolio disponuje integrovaným systémem správy dat uložených v prohlížeči.'
-                )}
-                onSave={(val) => onUpdateSiteText?.('footer.adminDesc', val)}
-                isAdmin={isAdmin}
-                multiline
-                rows={2}
-                label="Popis správy dat v patičce"
-              />
-            </div>
-            <div className="pt-1 flex flex-col gap-2">
-              <button
-                onClick={onOpenBackup}
-                className="inline-flex items-center gap-1.5 text-xs text-stone-300 hover:text-white transition-colors cursor-pointer"
-              >
-                <Database className="w-3.5 h-3.5 text-stone-500" />
+          {/* Column 3: Data & Admin (Editor Environment Only) */}
+          {canManagePortfolio && (
+            <div className="md:col-span-3 space-y-3">
+              <span className="text-xs uppercase tracking-wider text-stone-400 font-semibold block mb-3">
                 <InlineText
-                  value={getSiteText(siteTexts, 'footer.backupBtn', 'Záloha a obnovení dat (JSON)')}
-                  onSave={(val) => onUpdateSiteText?.('footer.backupBtn', val)}
+                  value={getSiteText(siteTexts, 'footer.adminTitle', 'Správa obsahu')}
+                  onSave={(val) => onUpdateSiteText?.('footer.adminTitle', val)}
                   isAdmin={isAdmin}
-                  label="Tlačítko zálohy v patičce"
+                  label="Nadpis správy obsahu v patičce"
                 />
-              </button>
-
-              {!isAdmin && (
+              </span>
+              <div className="text-xs text-stone-400 leading-relaxed font-normal">
+                <InlineText
+                  value={getSiteText(
+                    siteTexts,
+                    'footer.adminDesc',
+                    'Portfolio disponuje integrovaným systémem správy dat uložených v prohlížeči.'
+                  )}
+                  onSave={(val) => onUpdateSiteText?.('footer.adminDesc', val)}
+                  isAdmin={isAdmin}
+                  multiline
+                  rows={2}
+                  label="Popis správy dat v patičce"
+                />
+              </div>
+              <div className="pt-1 flex flex-col gap-2">
                 <button
-                  onClick={onOpenLogin}
-                  className="text-left text-xs text-stone-400 hover:text-stone-200 transition-colors cursor-pointer"
+                  onClick={onOpenBackup}
+                  className="inline-flex items-center gap-1.5 text-xs text-stone-300 hover:text-white transition-colors cursor-pointer"
                 >
-                  {getSiteText(siteTexts, 'footer.loginBtn', 'Přihlásit se do režimu úprav')}
+                  <Database className="w-3.5 h-3.5 text-stone-500" />
+                  <InlineText
+                    value={getSiteText(siteTexts, 'footer.backupBtn', 'Záloha a obnovení dat (JSON)')}
+                    onSave={(val) => onUpdateSiteText?.('footer.backupBtn', val)}
+                    isAdmin={isAdmin}
+                    label="Tlačítko zálohy v patičce"
+                  />
                 </button>
-              )}
+
+                {!isAdmin && (
+                  <button
+                    onClick={onOpenLogin}
+                    className="text-left text-xs text-stone-400 hover:text-stone-200 transition-colors cursor-pointer"
+                  >
+                    {getSiteText(siteTexts, 'footer.loginBtn', 'Přihlásit se do režimu úprav')}
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
         </div>
 

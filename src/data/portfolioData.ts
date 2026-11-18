@@ -1028,7 +1028,20 @@ export const initialPortfolioData: PortfolioDatabase = {
 const STORAGE_KEY = 'portfolio_kata_kalivodova_db_v3';
 const ADMIN_SESSION_KEY = 'portfolio_kata_admin_session';
 
+export function isEditorEnvironment(): boolean {
+  if (import.meta.env.VITE_ENABLE_ADMIN === 'true') return true;
+  if (import.meta.env.VITE_ENABLE_ADMIN === 'false') return false;
+  if (!import.meta.env.DEV) return false;
+  if (typeof window !== 'undefined' && window.location.hostname.endsWith('.github.io')) {
+    return false;
+  }
+  return true;
+}
+
 export function getStoredPortfolioData(): PortfolioDatabase {
+  if (!isEditorEnvironment()) {
+    return initialPortfolioData;
+  }
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return initialPortfolioData;
@@ -1101,6 +1114,7 @@ export function getStoredPortfolioData(): PortfolioDatabase {
 }
 
 export function saveStoredPortfolioData(data: PortfolioDatabase): void {
+  if (!isEditorEnvironment()) return;
   try {
     const cleanData: PortfolioDatabase = {
       ...data,
@@ -1122,6 +1136,7 @@ export function resetStoredPortfolioData(): PortfolioDatabase {
 }
 
 export function getAdminSession(): boolean {
+  if (!isEditorEnvironment()) return false;
   try {
     return localStorage.getItem(ADMIN_SESSION_KEY) === 'true';
   } catch {
@@ -1131,7 +1146,7 @@ export function getAdminSession(): boolean {
 
 export function setAdminSession(isLoggedIn: boolean): void {
   try {
-    if (isLoggedIn) {
+    if (isLoggedIn && isEditorEnvironment()) {
       localStorage.setItem(ADMIN_SESSION_KEY, 'true');
     } else {
       localStorage.removeItem(ADMIN_SESSION_KEY);

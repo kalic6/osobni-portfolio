@@ -18,6 +18,7 @@ import {
   type SitePalette,
   SITE_PALETTES,
   getSiteText,
+  isEditorEnvironment,
 } from './data/portfolioData';
 
 import { Header, type PageView } from './components/Header';
@@ -42,8 +43,13 @@ function PortfolioApp() {
   const [activeView, setActiveView] = useState<PageView>('home');
   const [activePostId, setActivePostId] = useState<string | null>(null);
 
-  // Admin authentication state
-  const [isAdmin, setIsAdmin] = useState<boolean>(() => getAdminSession());
+  const canManagePortfolio = isEditorEnvironment();
+
+  // Admin authentication state (restricted strictly to editor environment)
+  const [isAdminState, setIsAdminState] = useState<boolean>(() =>
+    canManagePortfolio ? getAdminSession() : false
+  );
+  const isAdmin = canManagePortfolio && isAdminState;
 
   // Modal manager state
   const [modalOpen, setModalOpen] = useState(false);
@@ -86,14 +92,15 @@ function PortfolioApp() {
 
   // Admin login handler
   const handleLoginSuccess = () => {
-    setIsAdmin(true);
+    if (!canManagePortfolio) return;
+    setIsAdminState(true);
     setAdminSession(true);
     showToast('Jste přihlášena jako administrátorka portfolia. Režim úprav je aktivní.');
   };
 
   // Admin logout handler
   const handleLogout = () => {
-    setIsAdmin(false);
+    setIsAdminState(false);
     setAdminSession(false);
     showToast('Byla jste bezpečně odhlášena z režimu úprav.');
   };
@@ -296,14 +303,16 @@ function PortfolioApp() {
     }
   };
 
-  // Modal open helpers
+  // Modal open helpers (available only in editor environment)
   const openLogin = () => {
+    if (!canManagePortfolio) return;
     setModalType('login');
     setEditingItem(null);
     setModalOpen(true);
   };
 
   const openManifestEdit = () => {
+    if (!canManagePortfolio) return;
     setModalType('manifest');
     setEditingItem(null);
     setModalOpen(true);
@@ -312,36 +321,42 @@ function PortfolioApp() {
   const openAddModal = (
     type: 'timeline' | 'course' | 'experience' | 'post'
   ) => {
+    if (!canManagePortfolio) return;
     setModalType(type);
     setEditingItem(null);
     setModalOpen(true);
   };
 
   const openEditTimeline = (item: TimelineItem) => {
+    if (!canManagePortfolio) return;
     setEditingItem(item);
     setModalType('timeline');
     setModalOpen(true);
   };
 
   const openEditCourse = (course: StudyCourse) => {
+    if (!canManagePortfolio) return;
     setEditingItem(course);
     setModalType('course');
     setModalOpen(true);
   };
 
   const openEditExperience = (exp: WorkExperience) => {
+    if (!canManagePortfolio) return;
     setEditingItem(exp);
     setModalType('experience');
     setModalOpen(true);
   };
 
   const openEditPost = (post: BlogPost) => {
+    if (!canManagePortfolio) return;
     setEditingItem(post);
     setModalType('post');
     setModalOpen(true);
   };
 
   const openBackup = () => {
+    if (!canManagePortfolio) return;
     setModalType('backup');
     setEditingItem(null);
     setModalOpen(true);
@@ -361,6 +376,7 @@ function PortfolioApp() {
       {/* Sticky Top Bar Header with activeView navigation */}
       <Header
         isAdmin={isAdmin}
+        canManagePortfolio={canManagePortfolio}
         activeView={activeView}
         siteTexts={data.siteTexts || defaultSiteTexts}
         activePalette={activePalette}
@@ -599,20 +615,23 @@ function PortfolioApp() {
         onOpenBackup={openBackup}
         onOpenLogin={openLogin}
         isAdmin={isAdmin}
+        canManagePortfolio={canManagePortfolio}
         onNavigate={handleNavigate}
       />
 
-      {/* Admin Modal (Login, Manifest, Timeline, Course, Experience, Post, Backup) */}
-      <AdminModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        modalType={modalType}
-        currentData={data}
-        onSaveData={handleSaveData}
-        onLoginSuccess={handleLoginSuccess}
-        editingItem={editingItem}
-        onResetToDefaults={handleResetToDefaults}
-      />
+      {/* Admin Modal (Editor Environment Only) */}
+      {canManagePortfolio && (
+        <AdminModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          modalType={modalType}
+          currentData={data}
+          onSaveData={handleSaveData}
+          onLoginSuccess={handleLoginSuccess}
+          editingItem={editingItem}
+          onResetToDefaults={handleResetToDefaults}
+        />
+      )}
 
       {/* Notification Toast */}
       {toastMessage && (

@@ -7,6 +7,7 @@ export type PageView = 'home' | 'study' | 'experience' | 'blog' | 'article';
 
 interface HeaderProps {
   isAdmin: boolean;
+  canManagePortfolio?: boolean;
   activeView: PageView;
   siteTexts?: Record<string, string>;
   activePalette?: SitePalette;
@@ -19,6 +20,7 @@ interface HeaderProps {
 
 export function Header({
   isAdmin,
+  canManagePortfolio = false,
   activeView,
   siteTexts = {},
   activePalette,
@@ -129,40 +131,42 @@ export function Header({
             </a>
           </nav>
 
-          {/* Zone 3: 1 primary action */}
-          <div className="flex items-center gap-3 shrink-0">
-            {isAdmin ? (
-              <div className="flex items-center gap-2">
-                <span className="hidden sm:inline-flex items-center text-xs font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200/80 rounded-md px-2.5 py-1">
-                  <InlineText
-                    value={getSiteText(siteTexts, 'header.adminBadge', 'Režim úprav')}
-                    onSave={(val) => onUpdateSiteText?.('header.adminBadge', val)}
-                    isAdmin={isAdmin}
-                    label="Označení administrace"
-                  />
-                </span>
+          {/* Zone 3: Primary admin action (editor only) + mobile menu toggle */}
+          <div className={`flex items-center gap-3 shrink-0 ${!canManagePortfolio ? 'md:hidden' : ''}`}>
+            {canManagePortfolio && (
+              isAdmin ? (
+                <div className="flex items-center gap-2">
+                  <span className="hidden sm:inline-flex items-center text-xs font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200/80 rounded-md px-2.5 py-1">
+                    <InlineText
+                      value={getSiteText(siteTexts, 'header.adminBadge', 'Režim úprav')}
+                      onSave={(val) => onUpdateSiteText?.('header.adminBadge', val)}
+                      isAdmin={isAdmin}
+                      label="Označení administrace"
+                    />
+                  </span>
+                  <button
+                    onClick={onLogout}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-stone-700 bg-stone-100 hover:bg-stone-200 border border-stone-300 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                    title="Odhlásit z administrace"
+                  >
+                    <Unlock className="w-3.5 h-3.5 text-emerald-600" />
+                    <InlineText
+                      value={getSiteText(siteTexts, 'header.logoutBtn', 'Odhlásit')}
+                      onSave={(val) => onUpdateSiteText?.('header.logoutBtn', val)}
+                      isAdmin={isAdmin}
+                      label="Tlačítko odhlášení"
+                    />
+                  </button>
+                </div>
+              ) : (
                 <button
-                  onClick={onLogout}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-stone-700 bg-stone-100 hover:bg-stone-200 border border-stone-300 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
-                  title="Odhlásit z administrace"
+                  onClick={onOpenLogin}
+                  className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-stone-900 bg-stone-100 hover:bg-stone-200 border border-stone-300 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer shadow-xs"
                 >
-                  <Unlock className="w-3.5 h-3.5 text-emerald-600" />
-                  <InlineText
-                    value={getSiteText(siteTexts, 'header.logoutBtn', 'Odhlásit')}
-                    onSave={(val) => onUpdateSiteText?.('header.logoutBtn', val)}
-                    isAdmin={isAdmin}
-                    label="Tlačítko odhlášení"
-                  />
+                  <Lock className="w-3.5 h-3.5 text-stone-500" />
+                  <span>{getSiteText(siteTexts, 'header.loginBtn', 'Správa portfolia')}</span>
                 </button>
-              </div>
-            ) : (
-              <button
-                onClick={onOpenLogin}
-                className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-stone-900 bg-stone-100 hover:bg-stone-200 border border-stone-300 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer shadow-xs"
-              >
-                <Lock className="w-3.5 h-3.5 text-stone-500" />
-                <span>{getSiteText(siteTexts, 'header.loginBtn', 'Správa portfolia')}</span>
-              </button>
+              )
             )}
 
             {/* Mobile menu toggle */}
@@ -178,7 +182,7 @@ export function Header({
       </div>
 
       {/* Admin Quick Action Ribbon if Logged In */}
-      {isAdmin && (
+      {canManagePortfolio && isAdmin && (
         <div className="bg-stone-900 text-stone-200 px-4 py-2 text-xs border-t border-stone-800">
           <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
             <span className="text-stone-400 font-mono text-[11px]">
