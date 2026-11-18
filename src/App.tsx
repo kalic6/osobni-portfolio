@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import {
   getStoredPortfolioData,
   saveStoredPortfolioData,
@@ -209,6 +209,7 @@ function PortfolioApp() {
   };
 
   const [pendingAnchor, setPendingAnchor] = useState<string | null>(initialRoute.anchor);
+  const skipNextTopScrollRef = useRef(Boolean(initialRoute.anchor));
 
   const scrollToSectionAnchor = (anchor: string) => {
     const id = anchor.replace(/^#/, '');
@@ -223,21 +224,41 @@ function PortfolioApp() {
       const target = pendingAnchor;
       setPendingAnchor(null);
       requestAnimationFrame(() => {
-        setTimeout(() => scrollToSectionAnchor(target), 60);
+        setTimeout(() => scrollToSectionAnchor(target), 80);
       });
     }
   }, [activeView, pendingAnchor]);
+
+  // Always reset viewport to the top after switching views/articles (prevents mobile footer jump)
+  useLayoutEffect(() => {
+    if (skipNextTopScrollRef.current) {
+      skipNextTopScrollRef.current = false;
+      return;
+    }
+    if (pendingAnchor) return;
+
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+
+    const rafId = requestAnimationFrame(() => {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    });
+    return () => cancelAnimationFrame(rafId);
+  }, [activeView, activePostId, pendingAnchor]);
 
   // Keep browser Back/Forward buttons and manual URL edits working
   useEffect(() => {
     const syncFromUrl = () => {
       const route = parseRouteFromHash(window.location.hash, data.posts);
+      if (route.anchor) {
+        skipNextTopScrollRef.current = true;
+      }
       setActiveView(route.view);
       setActivePostId(route.postId);
       setPendingAnchor(route.anchor);
-      if (!route.anchor) {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
     };
     window.addEventListener('hashchange', syncFromUrl);
     window.addEventListener('popstate', syncFromUrl);
@@ -284,24 +305,30 @@ function PortfolioApp() {
     pushUrlRoute(view, view === 'article' ? activePostId : null, sectionAnchor);
     if (view === 'home' && sectionAnchor && sectionAnchor !== '#uvod') {
       if (activeView === 'home') {
-        scrollToSectionAnchor(sectionAnchor);
+        requestAnimationFrame(() => scrollToSectionAnchor(sectionAnchor));
       } else {
+        skipNextTopScrollRef.current = true;
         setPendingAnchor(sectionAnchor);
         setActiveView('home');
       }
       return;
     }
     setPendingAnchor(null);
+    if (view === activeView && view !== 'article') {
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      });
+      return;
+    }
     setActiveView(view);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Open standalone article view
   const handleOpenArticle = (postId: string) => {
+    setPendingAnchor(null);
     setActivePostId(postId);
     setActiveView('article');
     pushUrlRoute('article', postId);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Manifest update handler
@@ -708,7 +735,7 @@ function PortfolioApp() {
       )}
 
       {/* Main Content Area */}
-      <main className="flex-1">
+      <main key={`${activeView}:${activePostId || ''}`} className="flex-1">
         {activeView === 'home' && (
           /* HLAVNÍ STRÁNKA (HOMEPAGE) */
           <>

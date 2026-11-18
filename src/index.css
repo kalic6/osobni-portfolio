@@ -20,6 +20,11 @@ html {
   color-scheme: light;
 }
 
+html,
+body {
+  overflow-anchor: none;
+}
+
 /* Custom subtle scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

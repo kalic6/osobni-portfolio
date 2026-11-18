@@ -41,8 +41,8 @@ export function Header({
   ];
 
   const handleItemClick = (item: { view: PageView; anchor?: string }) => {
-    onNavigate(item.view, item.anchor);
     setMobileMenuOpen(false);
+    onNavigate(item.view, item.anchor);
   };
 
   return (
