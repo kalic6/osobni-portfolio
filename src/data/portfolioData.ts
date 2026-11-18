@@ -1070,6 +1070,9 @@ export function isEditorEnvironment(): boolean {
 
 function normalizeAssetUrl(url: string): string {
   if (!url) return url;
+  if (url.includes('custom_34b27bac1d32.png')) {
+    return './assets/images/profile_avatar_custom.png';
+  }
   return url
     .replace(/^\/src\/assets\/images\//, './assets/images/')
     .replace(/^\/assets\/aistudio\//, './assets/aistudio/');

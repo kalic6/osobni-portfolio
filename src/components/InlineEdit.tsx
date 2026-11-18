@@ -378,7 +378,8 @@ export function InlineText({
 
 // Preset images available in app
 export const PRESET_PORTFOLIO_IMAGES = [
-  { label: 'InfoStratég – Nový profilový obrázek (Amulet / Kompas)', url: './assets/aistudio/profile_picture_c1a456ff.jpeg' },
+  { label: 'InfoStratég – Osobní avatar (ilustrace)', url: './assets/images/profile_avatar_custom.png' },
+  { label: 'InfoStratég – Profilový kompas', url: './assets/aistudio/profile_picture_c1a456ff.jpeg' },
   { label: 'InfoStratég – Brand vizuál & Moodboard', url: './assets/aistudio/vizual_navrh2_504def8a.jpeg' },
   { label: 'Původní portrét (Káťa Kalivodová)', url: './assets/images/portrait_kata_manifest_1793720229771.jpg' },
   { label: 'Otevřený sešit & výzkum', url: './assets/images/blog_info_literacy_1793721968918.jpg' },

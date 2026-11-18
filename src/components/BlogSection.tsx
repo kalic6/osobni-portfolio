@@ -12,7 +12,7 @@ import {
   ArrowLeft,
   FolderPlus,
 } from 'lucide-react';
-import { type BlogPost, getPostTopics, getSiteText } from '../data/portfolioData';
+import { type BlogPost, getPostTopics, getPostSlug, getSiteText } from '../data/portfolioData';
 import { InlineText, InlineImage } from './InlineEdit';
 
 interface BlogSectionProps {
@@ -316,18 +316,42 @@ export function BlogSection({
                 className="group bg-white rounded-2xl border border-stone-200/90 overflow-hidden hover:border-stone-400 hover:shadow-md transition-all flex flex-col justify-between relative"
               >
                 <div>
-                  {/* Photo with InlineImage support */}
+                  {/* Photo with InlineImage support (clickable when not in admin mode) */}
                   <div className="relative aspect-16/10 w-full overflow-hidden bg-stone-200">
-                    <InlineImage
-                      src={post.imageUrl}
-                      alt={post.title}
-                      onSave={(newUrl) => onUpdatePost?.(post.id, { imageUrl: newUrl })}
-                      isAdmin={isAdmin}
-                      aspectClass="aspect-16/10"
-                    />
+                    {isAdmin || !onOpenPost ? (
+                      <InlineImage
+                        src={post.imageUrl}
+                        alt={post.title}
+                        onSave={(newUrl) => onUpdatePost?.(post.id, { imageUrl: newUrl })}
+                        isAdmin={isAdmin}
+                        aspectClass="aspect-16/10"
+                      />
+                    ) : (
+                      <a
+                        href={`#/blog/${getPostSlug(post)}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          onOpenPost(post.id);
+                        }}
+                        aria-label={`Přečíst článek: ${post.title}`}
+                        className="block w-full h-full cursor-pointer transition-transform duration-300 group-hover:scale-[1.03]"
+                      >
+                        <InlineImage
+                          src={post.imageUrl}
+                          alt={post.title}
+                          onSave={(newUrl) => onUpdatePost?.(post.id, { imageUrl: newUrl })}
+                          isAdmin={false}
+                          aspectClass="aspect-16/10"
+                        />
+                      </a>
+                    )}
                     
                     {/* Topic Badges Overlay */}
-                    <div className="absolute top-3 left-3 right-3 flex flex-wrap gap-1.5 pointer-events-auto">
+                    <div
+                      className={`absolute top-3 left-3 right-3 flex flex-wrap gap-1.5 ${
+                        isAdmin ? 'pointer-events-auto' : 'pointer-events-none'
+                      }`}
+                    >
                       {getPostTopics(post).map((topicLabel, tIdx) => (
                         <div
                           key={`${topicLabel}-${tIdx}`}
@@ -400,14 +424,27 @@ export function BlogSection({
                       )}
                     </div>
 
-                    {/* Headline */}
+                    {/* Headline (clickable when not in admin mode) */}
                     <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-stone-900 group-hover:text-stone-700 transition-colors leading-snug">
-                      <InlineText
-                        value={post.title}
-                        onSave={(val) => onUpdatePost?.(post.id, { title: val })}
-                        isAdmin={isAdmin}
-                        label="Titulek článku"
-                      />
+                      {isAdmin || !onOpenPost ? (
+                        <InlineText
+                          value={post.title}
+                          onSave={(val) => onUpdatePost?.(post.id, { title: val })}
+                          isAdmin={isAdmin}
+                          label="Titulek článku"
+                        />
+                      ) : (
+                        <a
+                          href={`#/blog/${getPostSlug(post)}`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            onOpenPost(post.id);
+                          }}
+                          className="block hover:text-stone-700 hover:underline decoration-stone-400/80 underline-offset-4 cursor-pointer transition-colors"
+                        >
+                          {post.title}
+                        </a>
+                      )}
                     </h3>
 
                     {/* Annotation */}
