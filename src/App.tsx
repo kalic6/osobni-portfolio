@@ -88,8 +88,8 @@ function PortfolioApp() {
     if (ok) {
       setSyncStatus('saved');
       showToast(
-        'Hotovo! Úpravy byly uloženy do souboru projektu. Teď už jen odešlete změny na GitHub.',
-        6000
+        'Uloženo v editoru! Aby se textové úpravy přenesly i do GitHub Syncu, napište do chatu např. „Propiš úpravy pro GitHub“ a pak odešlete Sync.',
+        8000
       );
       setTimeout(() => {
         setSyncStatus((prev) => (prev === 'saved' ? 'idle' : prev));
