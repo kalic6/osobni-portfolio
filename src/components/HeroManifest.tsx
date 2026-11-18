@@ -177,6 +177,11 @@ export function HeroManifest({
             <div className="flex flex-wrap items-center gap-4 pt-2">
               <a
                 href="#timeline"
+                onClick={(e) => {
+                  if (isAdmin) return;
+                  e.preventDefault();
+                  document.getElementById('timeline')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-stone-900 text-stone-50 text-sm font-medium hover:bg-stone-800 transition-colors shadow-xs"
               >
                 <InlineText
@@ -692,7 +697,7 @@ export function HeroManifest({
                       <div className={`mt-4 pt-3 border-t flex items-center justify-between text-[11px] ${activePalette.aiCardFooter}`}>
                         <span className="flex items-center gap-1.5 opacity-80">
                           <ShieldCheck className="w-3.5 h-3.5" />
-                          <span>Informační etika</span>
+                          <span>AI etika</span>
                         </span>
                         <span className="font-mono text-[10px] opacity-75">kodex #{idx + 1}</span>
                       </div>

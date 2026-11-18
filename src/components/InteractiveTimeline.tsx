@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Sparkles,
   History,
@@ -48,11 +48,36 @@ export function InteractiveTimeline({
   onInsertItemAt,
 }: InteractiveTimelineProps) {
   const [selectedItem, setSelectedItem] = useState<TimelineItem | null>(null);
+  const [activePhase, setActivePhase] = useState<TimelinePhase>('past');
 
   // Guarantee strict phase order: 1. past (Odkud jdu) -> 2. present (Kde jsem) -> 3. future (Kam směřuji)
   const sortedAllItems = sortTimelineItems(items);
 
+  // Track which phase is currently in view while scrolling through the timeline
+  useEffect(() => {
+    const phases: TimelinePhase[] = ['past', 'present', 'future'];
+    const handleScroll = () => {
+      const offset = isAdmin ? 210 : 165;
+      let current: TimelinePhase = 'past';
+      for (const phase of phases) {
+        const el = document.getElementById(`timeline-phase-${phase}`);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= offset) {
+            current = phase;
+          }
+        }
+      }
+      setActivePhase(current);
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isAdmin, sortedAllItems.length]);
+
   const scrollToPhase = (phase: TimelinePhase) => {
+    setActivePhase(phase);
     const el = document.getElementById(`timeline-phase-${phase}`);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -105,7 +130,12 @@ export function InteractiveTimeline({
   };
 
   return (
-    <section id="timeline" className="py-16 md:py-24 bg-stone-100/60 border-t border-stone-200">
+    <section
+      id="timeline"
+      className={`py-16 md:py-24 bg-stone-100/60 border-t border-stone-200 ${
+        isAdmin ? 'scroll-mt-28' : 'scroll-mt-16'
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
@@ -162,50 +192,68 @@ export function InteractiveTimeline({
           )}
         </div>
 
-        {/* Phase Quick Scroll Navigation (No filtering, smooth scroll, no numbers in parentheses) */}
-        <div className="flex flex-wrap items-center gap-2 mb-10 p-1.5 bg-stone-200/70 rounded-xl max-w-fit">
-          <button
-            type="button"
-            onClick={() => scrollToPhase('past')}
-            className="inline-flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg bg-white/90 hover:bg-white text-stone-800 shadow-2xs hover:shadow-xs transition-all cursor-pointer whitespace-nowrap"
-            title="Přejít na etapu Odkud jdu"
-          >
-            <History className="w-3.5 h-3.5 text-stone-600" />
-            <InlineText
-              value={getSiteText(siteTexts, 'timeline.filterPast', 'Odkud jdu')}
-              onSave={(val) => onUpdateSiteText?.('timeline.filterPast', val)}
-              isAdmin={isAdmin}
-              label="Záložka: Odkud jdu"
-            />
-          </button>
-          <button
-            type="button"
-            onClick={() => scrollToPhase('present')}
-            className="inline-flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg bg-white/90 hover:bg-white text-slate-900 shadow-2xs hover:shadow-xs transition-all cursor-pointer whitespace-nowrap"
-            title="Přejít na etapu Kde jsem"
-          >
-            <Compass className="w-3.5 h-3.5 text-slate-800" />
-            <InlineText
-              value={getSiteText(siteTexts, 'timeline.filterPresent', 'Kde jsem')}
-              onSave={(val) => onUpdateSiteText?.('timeline.filterPresent', val)}
-              isAdmin={isAdmin}
-              label="Záložka: Kde jsem"
-            />
-          </button>
-          <button
-            type="button"
-            onClick={() => scrollToPhase('future')}
-            className="inline-flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg bg-white/90 hover:bg-white text-emerald-950 shadow-2xs hover:shadow-xs transition-all cursor-pointer whitespace-nowrap"
-            title="Přejít na etapu Kam směřuji"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-            <InlineText
-              value={getSiteText(siteTexts, 'timeline.filterFuture', 'Kam směřuji')}
-              onSave={(val) => onUpdateSiteText?.('timeline.filterFuture', val)}
-              isAdmin={isAdmin}
-              label="Záložka: Kam směřuji"
-            />
-          </button>
+        {/* Sticky Phase Quick Scroll Navigation (Pins while scrolling along the timeline) */}
+        <div
+          className={`sticky z-30 mb-10 flex justify-start transition-all ${
+            isAdmin ? 'top-[7rem]' : 'top-[4.5rem]'
+          }`}
+        >
+          <div className="inline-flex flex-wrap items-center gap-1.5 sm:gap-2 p-1.5 bg-stone-200/85 backdrop-blur-md border border-stone-300/80 rounded-2xl shadow-md">
+            <button
+              type="button"
+              onClick={() => scrollToPhase('past')}
+              className={`inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all cursor-pointer whitespace-nowrap ${
+                activePhase === 'past'
+                  ? 'bg-stone-800 text-white shadow-xs'
+                  : 'bg-white/85 hover:bg-white text-stone-800 hover:shadow-xs'
+              }`}
+              title="Přejít na etapu Odkud jdu"
+            >
+              <History className={`w-3.5 h-3.5 ${activePhase === 'past' ? 'text-stone-200' : 'text-stone-600'}`} />
+              <InlineText
+                value={getSiteText(siteTexts, 'timeline.filterPast', 'Odkud jdu')}
+                onSave={(val) => onUpdateSiteText?.('timeline.filterPast', val)}
+                isAdmin={isAdmin}
+                label="Záložka: Odkud jdu"
+              />
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollToPhase('present')}
+              className={`inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all cursor-pointer whitespace-nowrap ${
+                activePhase === 'present'
+                  ? 'bg-[#0C1E34] text-white shadow-xs'
+                  : 'bg-white/85 hover:bg-white text-slate-900 hover:shadow-xs'
+              }`}
+              title="Přejít na etapu Kde jsem"
+            >
+              <Compass className={`w-3.5 h-3.5 ${activePhase === 'present' ? 'text-sky-300' : 'text-slate-800'}`} />
+              <InlineText
+                value={getSiteText(siteTexts, 'timeline.filterPresent', 'Kde jsem')}
+                onSave={(val) => onUpdateSiteText?.('timeline.filterPresent', val)}
+                isAdmin={isAdmin}
+                label="Záložka: Kde jsem"
+              />
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollToPhase('future')}
+              className={`inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all cursor-pointer whitespace-nowrap ${
+                activePhase === 'future'
+                  ? 'bg-emerald-700 text-white shadow-xs'
+                  : 'bg-white/85 hover:bg-white text-emerald-950 hover:shadow-xs'
+              }`}
+              title="Přejít na etapu Kam směřuji"
+            >
+              <Sparkles className={`w-3.5 h-3.5 ${activePhase === 'future' ? 'text-emerald-200' : 'text-emerald-600'}`} />
+              <InlineText
+                value={getSiteText(siteTexts, 'timeline.filterFuture', 'Kam směřuji')}
+                onSave={(val) => onUpdateSiteText?.('timeline.filterFuture', val)}
+                isAdmin={isAdmin}
+                label="Záložka: Kam směřuji"
+              />
+            </button>
+          </div>
         </div>
 
         {/* Timeline Flow */}
@@ -243,7 +291,9 @@ export function InteractiveTimeline({
                   {isPhaseTransition && (
                     <div
                       id={`timeline-phase-${item.phase}`}
-                      className="relative flex items-center justify-center my-8 pt-4 z-20 scroll-mt-28"
+                      className={`relative flex items-center justify-center my-8 pt-4 z-20 ${
+                        isAdmin ? 'scroll-mt-44' : 'scroll-mt-36'
+                      }`}
                     >
                       <div
                         className={`inline-flex items-center gap-2.5 px-5 py-2 rounded-full text-xs sm:text-sm font-bold shadow-xs border ${

@@ -140,11 +140,41 @@ function PortfolioApp() {
     showToast('Byla jste bezpečně odhlášena z režimu úprav.');
   };
 
-  // Safe navigation handler
-  const handleNavigate = (view: PageView) => {
+  const [pendingAnchor, setPendingAnchor] = useState<string | null>(null);
+
+  const scrollToSectionAnchor = (anchor: string) => {
+    const id = anchor.replace(/^#/, '');
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  useEffect(() => {
+    if (activeView === 'home' && pendingAnchor) {
+      const target = pendingAnchor;
+      setPendingAnchor(null);
+      requestAnimationFrame(() => {
+        setTimeout(() => scrollToSectionAnchor(target), 60);
+      });
+    }
+  }, [activeView, pendingAnchor]);
+
+  // Safe navigation handler (supports optional section anchor like #timeline)
+  const handleNavigate = (view: PageView, sectionAnchor?: string) => {
     if (view !== 'article') {
       setActivePostId(null);
     }
+    if (view === 'home' && sectionAnchor && sectionAnchor !== '#uvod') {
+      if (activeView === 'home') {
+        scrollToSectionAnchor(sectionAnchor);
+      } else {
+        setPendingAnchor(sectionAnchor);
+        setActiveView('home');
+      }
+      return;
+    }
+    setPendingAnchor(null);
     setActiveView(view);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
