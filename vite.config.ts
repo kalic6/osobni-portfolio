@@ -5,6 +5,78 @@ import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import { defineConfig, type Plugin } from 'vite';
+import {
+  type PortfolioSnapshot,
+  ROBOTS_TXT_CONTENT,
+  renderJsonLdScript,
+  renderLlmsFullTxt,
+  renderLlmsTxt,
+  renderStaticPortfolioHtml,
+} from './scripts/prerenderPortfolio';
+
+function loadPublishedSnapshot(): PortfolioSnapshot {
+  const targetPath = path.resolve(__dirname, 'src/data/publishedData.json');
+  try {
+    const raw = fs.readFileSync(targetPath, 'utf-8');
+    return JSON.parse(raw) as PortfolioSnapshot;
+  } catch {
+    return {};
+  }
+}
+
+function aiReadablePortfolioPlugin(): Plugin {
+  let outDir = path.resolve(__dirname, 'dist');
+  return {
+    name: 'ai-readable-portfolio',
+    configResolved(config) {
+      outDir = path.resolve(config.root, config.build.outDir);
+    },
+    transformIndexHtml(html) {
+      const snapshot = loadPublishedSnapshot();
+      const jsonLd = renderJsonLdScript(snapshot);
+      const staticHtml = renderStaticPortfolioHtml(snapshot);
+      const llmsLink = '<link rel="alternate" type="text/plain" title="Obsah webu pro AI (llms.txt)" href="./llms.txt" />';
+
+      let transformed = html.replace('</head>', `    ${llmsLink}\n    ${jsonLd}\n  </head>`);
+      transformed = transformed.replace(
+        /<div id="root">\s*<\/div>/,
+        `<div id="root">\n${staticHtml}\n    </div>`
+      );
+      return transformed;
+    },
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        const cleanUrl = (req.url || '').split('?')[0];
+        if (cleanUrl === '/llms.txt') {
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+          res.end(renderLlmsTxt(loadPublishedSnapshot()));
+          return;
+        }
+        if (cleanUrl === '/llms-full.txt') {
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+          res.end(renderLlmsFullTxt(loadPublishedSnapshot()));
+          return;
+        }
+        if (cleanUrl === '/robots.txt') {
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+          res.end(ROBOTS_TXT_CONTENT);
+          return;
+        }
+        next();
+      });
+    },
+    closeBundle() {
+      const snapshot = loadPublishedSnapshot();
+      if (!fs.existsSync(outDir)) return;
+      fs.writeFileSync(path.join(outDir, 'llms.txt'), renderLlmsTxt(snapshot), 'utf-8');
+      fs.writeFileSync(path.join(outDir, 'llms-full.txt'), renderLlmsFullTxt(snapshot), 'utf-8');
+      fs.writeFileSync(path.join(outDir, 'robots.txt'), ROBOTS_TXT_CONTENT, 'utf-8');
+    },
+  };
+}
 
 function persistBase64Images(value: unknown, imagesDir: string): unknown {
   if (typeof value === 'string') {
@@ -82,7 +154,7 @@ function savePortfolioToCodePlugin(): Plugin {
 export default defineConfig(() => {
   return {
     base: './',
-    plugins: [react(), tailwindcss(), savePortfolioToCodePlugin()],
+    plugins: [react(), tailwindcss(), savePortfolioToCodePlugin(), aiReadablePortfolioPlugin()],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
