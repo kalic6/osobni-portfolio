@@ -101,6 +101,8 @@ function PortfolioApp() {
 
   // Primary data state stored in localStorage
   const [data, setData] = useState<PortfolioDatabase>(() => getStoredPortfolioData());
+  const dataRef = useRef<PortfolioDatabase>(data);
+  dataRef.current = data;
 
   const initialRoute =
     typeof window !== 'undefined'
@@ -143,14 +145,17 @@ function PortfolioApp() {
   // Automatically persist existing localStorage edits into src/data/publishedData.json in editor mode
   useEffect(() => {
     if (canManagePortfolio && hasLocalStorageEdits()) {
-      void syncPortfolioToCodebase(data);
+      void syncPortfolioToCodebase(dataRef.current);
     }
   }, [canManagePortfolio]);
 
   const handleSyncToCodebase = async () => {
     if (syncStatus === 'saving') return;
     setSyncStatus('saving');
-    const ok = await syncPortfolioToCodebase(data);
+    // Allow any active inline input onBlur handler to commit to dataRef/localStorage first
+    await new Promise((resolve) => setTimeout(resolve, 25));
+    const latestData = hasLocalStorageEdits() ? getStoredPortfolioData() : dataRef.current;
+    const ok = await syncPortfolioToCodebase(latestData);
     if (ok) {
       setSyncStatus('saved');
       showToast(
@@ -179,6 +184,7 @@ function PortfolioApp() {
       newData.posts.some((p) => getPostTopics(p).includes(t))
     );
     const cleanData = { ...newData, blogTopics: prunedTopics };
+    dataRef.current = cleanData;
     setData(cleanData);
     saveStoredPortfolioData(cleanData);
     if (feedbackMsg) {
@@ -333,10 +339,11 @@ function PortfolioApp() {
 
   // Manifest update handler
   const handleUpdateManifest = (updatedManifest: Partial<ManifestData>) => {
+    const current = dataRef.current;
     const updated = {
-      ...data,
+      ...current,
       manifest: {
-        ...data.manifest,
+        ...current.manifest,
         ...updatedManifest,
       },
     };
@@ -459,8 +466,9 @@ function PortfolioApp() {
   };
 
   const handleUpdateSiteText = (key: string, value: string) => {
-    const updatedTexts = { ...(data.siteTexts || defaultSiteTexts), [key]: value };
-    handleSaveData({ ...data, siteTexts: updatedTexts }, 'Text byl upraven.');
+    const current = dataRef.current;
+    const updatedTexts = { ...(current.siteTexts || defaultSiteTexts), [key]: value };
+    handleSaveData({ ...current, siteTexts: updatedTexts }, 'Text byl upraven.');
   };
 
   // Safe Deletion handlers with custom in-page modal dialog

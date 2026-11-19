@@ -1204,19 +1204,36 @@ export function hasLocalStorageEdits(): boolean {
   }
 }
 
-export async function syncPortfolioToCodebase(data: PortfolioDatabase): Promise<boolean> {
-  if (!isEditorEnvironment()) return false;
-  try {
-    const cleanData = normalizePortfolioForPublish(data);
-    const res = await fetch('/__api/save-portfolio', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(cleanData),
-    });
-    return res.ok;
-  } catch {
-    return false;
-  }
+let syncQueue: Promise<boolean> = Promise.resolve(true);
+
+export function syncPortfolioToCodebase(data: PortfolioDatabase): Promise<boolean> {
+  if (!isEditorEnvironment()) return Promise.resolve(false);
+  const cleanData = normalizePortfolioForPublish(data);
+  const run = async (): Promise<boolean> => {
+    try {
+      const res = await fetch('/__api/save-portfolio', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(cleanData),
+      });
+      if (!res.ok) return false;
+      try {
+        const json = (await res.json()) as { ok?: boolean; data?: PortfolioDatabase };
+        if (json?.data && json.data.manifest) {
+          const normalized = normalizePortfolioForPublish(json.data);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+        }
+      } catch {
+        // Ignore non-JSON or storage errors
+      }
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  const next = syncQueue.then(run, run);
+  syncQueue = next;
+  return next;
 }
 
 export function getStoredPortfolioData(): PortfolioDatabase {
