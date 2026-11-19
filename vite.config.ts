@@ -11,6 +11,7 @@ import {
   renderJsonLdScript,
   renderLlmsFullTxt,
   renderLlmsTxt,
+  renderSitemapXml,
   renderStaticPortfolioHtml,
 } from './scripts/prerenderPortfolio';
 
@@ -65,6 +66,12 @@ function aiReadablePortfolioPlugin(): Plugin {
           res.end(ROBOTS_TXT_CONTENT);
           return;
         }
+        if (cleanUrl === '/sitemap.xml') {
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+          res.end(renderSitemapXml());
+          return;
+        }
         next();
       });
     },
@@ -74,6 +81,7 @@ function aiReadablePortfolioPlugin(): Plugin {
       fs.writeFileSync(path.join(outDir, 'llms.txt'), renderLlmsTxt(snapshot), 'utf-8');
       fs.writeFileSync(path.join(outDir, 'llms-full.txt'), renderLlmsFullTxt(snapshot), 'utf-8');
       fs.writeFileSync(path.join(outDir, 'robots.txt'), ROBOTS_TXT_CONTENT, 'utf-8');
+      fs.writeFileSync(path.join(outDir, 'sitemap.xml'), renderSitemapXml(), 'utf-8');
     },
   };
 }

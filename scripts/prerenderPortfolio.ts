@@ -532,6 +532,20 @@ export function renderLlmsFullTxt(data: PortfolioSnapshot, siteUrl = SITE_BASE_U
   return parts.join('\n\n').replace(/\n{3,}/g, '\n\n').trim() + '\n';
 }
 
+export function renderSitemapXml(siteUrl = SITE_BASE_URL): string {
+  const today = new Date().toISOString().split('T')[0];
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${escapeHtml(siteUrl)}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
+`;
+}
+
 export const ROBOTS_TXT_CONTENT = `User-agent: *
 Allow: /
 
@@ -552,4 +566,6 @@ Allow: /
 
 User-agent: Google-Extended
 Allow: /
+
+Sitemap: ${SITE_BASE_URL}sitemap.xml
 `;
