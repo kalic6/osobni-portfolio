@@ -16,9 +16,9 @@ import { FormatToolbar } from './FormattedArticleContent';
 interface AdminModalProps {
   isOpen: boolean;
   onClose: () => void;
-  modalType: 'login' | 'manifest' | 'timeline' | 'course' | 'experience' | 'post' | 'backup';
+  modalType: 'login' | 'manifest' | 'timeline' | 'course' | 'experience' | 'post' | 'backup' | 'analytics';
   currentData: PortfolioDatabase;
-  onSaveData: (newData: PortfolioDatabase) => void;
+  onSaveData: (newData: PortfolioDatabase, feedbackMsg?: string) => void;
   onLoginSuccess: () => void;
   editingItem?: TimelineItem | StudyCourse | WorkExperience | BlogPost | null;
   onResetToDefaults: () => void;
@@ -112,6 +112,8 @@ export function AdminModal({
   const [postTopics, setPostTopics] = useState<string[]>([]);
   const [newPostTopicInput, setNewPostTopicInput] = useState('');
   const [jsonInput, setJsonInput] = useState('');
+  const [ga4IdInput, setGa4IdInput] = useState('');
+  const [ga4Error, setGa4Error] = useState('');
 
   useEffect(() => {
     if (modalType === 'manifest') {
@@ -215,6 +217,9 @@ export function AdminModal({
       }
     } else if (modalType === 'backup') {
       setJsonInput(JSON.stringify(currentData, null, 2));
+    } else if (modalType === 'analytics') {
+      setGa4IdInput(currentData.siteTexts?.['analytics.ga4Id'] || '');
+      setGa4Error('');
     }
   }, [modalType, editingItem, currentData, isOpen]);
 
@@ -475,6 +480,7 @@ export function AdminModal({
               {modalType === 'experience' && (editingItem ? 'Upravit pracovní zkušenost' : 'Přidat zkušenost')}
               {modalType === 'post' && (editingItem ? 'Upravit článek na blogu' : 'Přidat článek na blog')}
               {modalType === 'backup' && 'Záloha a obnovení dat'}
+              {modalType === 'analytics' && 'Google Analytics 4 & Consent Mode v2'}
             </h3>
           </div>
           <button
@@ -1313,6 +1319,88 @@ export function AdminModal({
               </button>
             </div>
           </div>
+        )}
+
+        {/* 9. ANALYTICS MODAL */}
+        {modalType === 'analytics' && (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const raw = ga4IdInput.trim();
+              let normalizedId = '';
+              if (raw) {
+                const extracted = raw.toUpperCase().match(/\b(G-[A-Z0-9]{4,})\b/);
+                if (!extracted) {
+                  setGa4Error(
+                    'Nepodařilo se najít platné GA4 ID měření (začíná na G-, např. G-XXXXXXXXXX). Můžete vložit samotné ID nebo celý <script> kód z Google Analytics.'
+                  );
+                  return;
+                }
+                normalizedId = extracted[1];
+                setGa4IdInput(normalizedId);
+              }
+              setGa4Error('');
+              onSaveData(
+                {
+                  ...currentData,
+                  siteTexts: {
+                    ...(currentData.siteTexts || {}),
+                    'analytics.ga4Id': normalizedId,
+                  },
+                },
+                normalizedId
+                  ? `GA4 ID (${normalizedId}) bylo uloženo. Nyní klikněte na „Uložit pro GitHub“.`
+                  : 'Měření Google Analytics 4 bylo vypnuto.'
+              );
+              onClose();
+            }}
+            className="space-y-4 text-xs sm:text-sm"
+          >
+            <p className="text-stone-600 leading-relaxed">
+              Vložte své <strong>ID měření (Measurement ID)</strong> ze služby Google Analytics 4 (najdete ho v Administrátor → Datové streamy → Web, ve tvaru <code className="bg-stone-100 px-1 py-0.5 rounded">G-...</code>). Můžete vložit i celý zkopírovaný kód — ID se rozpozná automaticky.
+            </p>
+
+            <div>
+              <label className="block text-stone-700 font-semibold mb-1">
+                Google Analytics 4 Measurement ID
+              </label>
+              <input
+                type="text"
+                value={ga4IdInput}
+                onChange={(e) => {
+                  setGa4IdInput(e.target.value);
+                  setGa4Error('');
+                }}
+                placeholder="G-XXXXXXXXXX"
+                className="w-full px-3.5 py-2 bg-stone-50 border border-stone-300 rounded-lg text-stone-900 font-mono"
+              />
+              {ga4Error && <p className="text-xs text-red-600 mt-1 font-medium">{ga4Error}</p>}
+            </div>
+
+            <div className="p-3.5 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-600 space-y-1">
+              <p className="font-semibold text-stone-800">Jak to funguje po uložení:</p>
+              <p>1. Uložte změnu zde a klikněte na <strong>Uložit pro GitHub</strong>.</p>
+              <p>2. Napište do chatu <em>„Propiš úpravy pro GitHub“</em> a proveďte <strong>Sync na GitHub</strong>.</p>
+              <p>3. Na GitHub Pages se pak do hlavičky stránky automaticky vloží GA4 kód napojený na Consent Mode v2.</p>
+            </div>
+
+            <div className="pt-3 border-t border-stone-200 flex items-center justify-end gap-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-xs font-medium text-stone-600 hover:text-stone-900 cursor-pointer"
+              >
+                Zrušit
+              </button>
+              <button
+                type="submit"
+                className="inline-flex items-center gap-1.5 px-5 py-2 bg-stone-900 text-white rounded-lg text-xs font-semibold hover:bg-stone-800 cursor-pointer"
+              >
+                <Save className="w-3.5 h-3.5" />
+                <span>Uložit GA4 ID</span>
+              </button>
+            </div>
+          </form>
         )}
 
       </div>

@@ -11,6 +11,7 @@ interface FooterProps {
   onUpdateSiteText?: (key: string, value: string) => void;
   onOpenBackup: () => void;
   onOpenLogin: () => void;
+  onOpenCookieSettings?: () => void;
   isAdmin: boolean;
   canManagePortfolio?: boolean;
   onNavigate?: (view: 'home' | 'study' | 'experience' | 'blog', anchor?: string) => void;
@@ -25,6 +26,7 @@ export function Footer({
   onUpdateSiteText,
   onOpenBackup,
   onOpenLogin,
+  onOpenCookieSettings,
   isAdmin,
   canManagePortfolio = false,
   onNavigate,
@@ -235,18 +237,29 @@ export function Footer({
             </span>
           </div>
 
-          <button
-            onClick={scrollToTop}
-            className="flex items-center gap-1 text-stone-400 hover:text-white transition-colors cursor-pointer"
-          >
-            <InlineText
-              value={getSiteText(siteTexts, 'footer.scrollTopBtn', 'Zpět nahoru')}
-              onSave={(val) => onUpdateSiteText?.('footer.scrollTopBtn', val)}
-              isAdmin={isAdmin}
-              label="Tlačítko nahoru"
-            />
-            <ArrowUp className="w-3.5 h-3.5" />
-          </button>
+          <div className="flex items-center gap-4">
+            {onOpenCookieSettings && (
+              <button
+                type="button"
+                onClick={onOpenCookieSettings}
+                className="text-stone-400 hover:text-white underline underline-offset-4 transition-colors cursor-pointer"
+              >
+                Nastavení cookies
+              </button>
+            )}
+            <button
+              onClick={scrollToTop}
+              className="flex items-center gap-1 text-stone-400 hover:text-white transition-colors cursor-pointer"
+            >
+              <InlineText
+                value={getSiteText(siteTexts, 'footer.scrollTopBtn', 'Zpět nahoru')}
+                onSave={(val) => onUpdateSiteText?.('footer.scrollTopBtn', val)}
+                isAdmin={isAdmin}
+                label="Tlačítko nahoru"
+              />
+              <ArrowUp className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       </div>
     </footer>

@@ -579,7 +579,10 @@ export const defaultSiteTexts: Record<string, string> = {
   "footer.backupBtn": "Záloha a obnovení dat (JSON)",
   "footer.loginBtn": "Přihlásit se do režimu úprav",
   "footer.copyrightRight": "Informační studia & digitální kurátorství",
-  "footer.scrollTopBtn": "Zpět nahoru"
+  "footer.scrollTopBtn": "Zpět nahoru",
+
+  // Analytics
+  "analytics.ga4Id": "G-DB7QHC93MN"
 };
 
 export const defaultAiPrinciples: AiPrinciple[] = [

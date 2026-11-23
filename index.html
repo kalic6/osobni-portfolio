@@ -19,6 +19,35 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Google Consent Mode v2 (musí běžet před načtením gtag.js) -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      (function () {
+        var analyticsGranted = false;
+        var marketingGranted = false;
+        try {
+          var saved = localStorage.getItem('portfolio_cookie_consent_v2');
+          if (saved) {
+            var parsed = JSON.parse(saved);
+            analyticsGranted = Boolean(parsed && parsed.analytics);
+            marketingGranted = Boolean(parsed && parsed.marketing);
+          }
+        } catch (e) {}
+        gtag('consent', 'default', {
+          ad_storage: marketingGranted ? 'granted' : 'denied',
+          ad_user_data: marketingGranted ? 'granted' : 'denied',
+          ad_personalization: marketingGranted ? 'granted' : 'denied',
+          analytics_storage: analyticsGranted ? 'granted' : 'denied',
+          personalization_storage: marketingGranted ? 'granted' : 'denied',
+          functionality_storage: 'granted',
+          security_storage: 'granted',
+          wait_for_update: 500
+        });
+        gtag('set', 'url_passthrough', true);
+        gtag('set', 'ads_data_redaction', !marketingGranted);
+      })();
+    </script>
   </head>
   <body class="bg-[#F4F7FA] text-[#0C1E34] antialiased selection:bg-[#0C1E34] selection:text-white">
     <div id="root"></div>

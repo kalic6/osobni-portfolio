@@ -35,8 +35,10 @@ import { BlogSection } from './components/BlogSection';
 import { ArticleDetailView } from './components/ArticleDetailView';
 import { AdminModal } from './components/AdminModal';
 import { Footer } from './components/Footer';
+import { CookieConsent } from './components/CookieConsent';
 import { ConfirmProvider, useConfirm } from './components/ConfirmModal';
-import { Check, Edit, LogOut, Database, Sparkles, Palette, Save, Loader2 } from 'lucide-react';
+import { isValidGa4Id, trackSpaPageView } from './utils/analytics';
+import { Check, Edit, LogOut, Database, Sparkles, Palette, Save, Loader2, BarChart3 } from 'lucide-react';
 
 const BASE_DOCUMENT_TITLE = 'Od informačního chaosu k porozumění a kontextu';
 
@@ -124,11 +126,12 @@ function PortfolioApp() {
   // Modal manager state
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState<
-    'login' | 'manifest' | 'timeline' | 'course' | 'experience' | 'post' | 'backup'
+    'login' | 'manifest' | 'timeline' | 'course' | 'experience' | 'post' | 'backup' | 'analytics'
   >('login');
   const [editingItem, setEditingItem] = useState<
     TimelineItem | StudyCourse | WorkExperience | BlogPost | null
   >(null);
+  const [cookieSettingsNonce, setCookieSettingsNonce] = useState(0);
 
   // Notification toast & GitHub codebase sync status
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -290,7 +293,21 @@ function PortfolioApp() {
     } else {
       document.title = BASE_DOCUMENT_TITLE;
     }
-  }, [activeView, activePostId, data.posts]);
+
+    // Track GA4 page_view in non-editor environments (Consent Mode v2 handles privacy automatically)
+    const ga4Id = (data.siteTexts?.['analytics.ga4Id'] || '').trim();
+    if (!canManagePortfolio && isValidGa4Id(ga4Id)) {
+      let virtualPath = '/';
+      if (activeView === 'study') virtualPath = '/studium';
+      else if (activeView === 'experience') virtualPath = '/zkusenosti';
+      else if (activeView === 'blog') virtualPath = '/blog';
+      else if (activeView === 'article') {
+        const currentPost = data.posts.find((p) => p.id === activePostId) || data.posts[0];
+        virtualPath = currentPost ? `/blog/${getPostSlug(currentPost)}` : '/blog';
+      }
+      trackSpaPageView(ga4Id, virtualPath, document.title);
+    }
+  }, [activeView, activePostId, data.posts, data.siteTexts, canManagePortfolio]);
 
   const pushUrlRoute = (view: PageView, postId: string | null, sectionAnchor?: string) => {
     const targetHash = buildHashForRoute(view, postId, data.posts, sectionAnchor);
@@ -690,6 +707,22 @@ function PortfolioApp() {
             </div>
             <div className="flex flex-wrap items-center gap-2 shrink-0">
               <button
+                onClick={() => {
+                  setEditingItem(null);
+                  setModalType('analytics');
+                  setModalOpen(true);
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1 bg-white hover:bg-amber-100 text-amber-950 border border-amber-300 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                title="Nastavit Google Analytics 4 (Measurement ID)"
+              >
+                <BarChart3 className="w-3.5 h-3.5 text-emerald-700" />
+                <span>
+                  {isValidGa4Id(data.siteTexts?.['analytics.ga4Id'])
+                    ? `GA4: ${data.siteTexts?.['analytics.ga4Id']}`
+                    : 'Nastavit GA4'}
+                </span>
+              </button>
+              <button
                 onClick={handleSyncToCodebase}
                 disabled={syncStatus === 'saving'}
                 className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all shadow-2xs cursor-pointer ${
@@ -880,10 +913,14 @@ function PortfolioApp() {
         onUpdateSiteText={handleUpdateSiteText}
         onOpenBackup={openBackup}
         onOpenLogin={openLogin}
+        onOpenCookieSettings={() => setCookieSettingsNonce((n) => n + 1)}
         isAdmin={isAdmin}
         canManagePortfolio={canManagePortfolio}
         onNavigate={handleNavigate}
       />
+
+      {/* GDPR / Google Consent Mode v2 Cookie Bar */}
+      <CookieConsent externalOpenRequest={cookieSettingsNonce} />
 
       {/* Admin Modal (Editor Environment Only) */}
       {canManagePortfolio && (

@@ -38,7 +38,13 @@ function aiReadablePortfolioPlugin(): Plugin {
       const staticHtml = renderStaticPortfolioHtml(snapshot);
       const llmsLink = '<link rel="alternate" type="text/plain" title="Obsah webu pro AI (llms.txt)" href="./llms.txt" />';
 
-      let transformed = html.replace('</head>', `    ${llmsLink}\n    ${jsonLd}\n  </head>`);
+      const rawGaId = (snapshot.siteTexts?.['analytics.ga4Id'] || '').trim();
+      const validGaId = /^G-[A-Z0-9]{4,}$/i.test(rawGaId) ? rawGaId : '';
+      const gaScript = validGaId
+        ? `\n    <script async src="https://www.googletagmanager.com/gtag/js?id=${validGaId}"></script>\n    <script>\n      gtag('js', new Date());\n      gtag('config', '${validGaId}', { anonymize_ip: true, send_page_view: false });\n    </script>`
+        : '';
+
+      let transformed = html.replace('</head>', `    ${llmsLink}\n    ${jsonLd}${gaScript}\n  </head>`);
       transformed = transformed.replace(
         /<div id="root">\s*<\/div>/,
         `<div id="root">\n${staticHtml}\n    </div>`
